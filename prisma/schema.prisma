@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// role: "Investor" | "Analyst" | "Administrator"
+// status: "Active" | "Suspended" | "Pending"
+// passwordHash: "<saltHex>:<derivedKeyHex>", produced by src/lib/password.ts (scrypt) — never a plaintext password
+model User {
+  id           String          @id
+  name         String
+  email        String          @unique
+  passwordHash String
+  role         String
+  status       String
+  perms        String
+  since        String
+  lastAccess   String
+  activity     ActivityEntry[]
+}
+
+model ActivityEntry {
+  id     Int    @id @default(autoincrement())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  text   String
+  when   String
+}
+
+model Wallet {
+  id      String  @id
+  name    String
+  kind    String
+  icon    String
+  tint    String
+  tintFg  String
+  created String
+  assets  Asset[]
+}
+
+// type: "Stock" | "Crypto" | "ETF" | "REIT"
+// current market price is NOT stored here — it's external market data, see src/mocks/external/quotes.ts
+model Asset {
+  id       String @id
+  walletId String
+  wallet   Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  ticker   String
+  name     String
+  type     String
+  qty      Float
+  avg      Float
+}
+
+model Goal {
+  id      String @id
+  name    String
+  target  Float
+  current Float
+  due     String
+}
+
+// status: "Published" | "Draft"
+model Article {
+  id       String  @id
+  title    String
+  category String
+  date     String
+  views    Int
+  status   String
+  author   String
+  read     String
+  summary  String
+  body     String?
+}
+
+// type: "Buy" | "Sell" | "Swap" | "Deposit"
+model Transaction {
+  id     String @id
+  date   String
+  type   String
+  asset  String
+  wallet String
+  qty    String
+  price  Float
+  total  Float
+}
