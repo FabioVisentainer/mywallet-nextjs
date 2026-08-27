@@ -122,10 +122,12 @@ Se um desses padrões passar a aparecer em 3+ lugares, é sinal de que merece vi
 
 | Componente | Telas |
 |---|---|
-| `Button` | Praticamente todas — login, cadastro, wallets, goals, news, analyst, admin, plans, performance, quiz |
-| `Badge` | Admin (papel/status), analyst studio (status do artigo), news (categoria), transactions (tipo), goals (status), plans (ribbons), quiz (perfil) |
+| `Button` | Praticamente todas — login, cadastro, wallets, goals, news, analyst, admin, plans, performance, quiz, institutional |
+| `Badge` | Admin (papel/status), analyst studio (status do artigo), news (categoria), transactions (tipo), goals (status), plans (ribbons), quiz (perfil), institutional (papel do operador) |
 | `Card` | Todas as telas do app autenticado |
-| `StatCard` | Dashboard, detalhe de carteira, performance |
-| `Alert` | Login, cadastro, formulário de ativo, formulário de artigo, esqueci/redefinir senha, detalhe de usuário (admin), performance |
-| `Input`/`Select`/`Textarea`/`Checkbox` | Login, cadastro, esqueci/redefinir senha, formulário de carteira, formulário de ativo, formulário de meta, formulário de artigo |
+| `StatCard` | Dashboard, detalhe de carteira, performance, relatório consolidado (institutional) |
+| `Alert` | Login, cadastro, formulário de ativo, formulário de artigo, esqueci/redefinir senha, detalhe de usuário (admin), performance, institutional (bloqueio de acesso + aviso de exclusividade) |
+| `Input`/`Select`/`Textarea`/`Checkbox` | Login, cadastro, esqueci/redefinir senha, formulário de carteira, formulário de ativo, formulário de meta, formulário de artigo, formulário de operador (institutional) |
 | `ProgressBar` | Dashboard (metas), goals, quiz, resultado do quiz |
+
+`institutional/` (mesa institucional, exclusiva de clientes `accountType="Institutional"`) não introduz nenhum componente visual novo — reaproveita 100% do catálogo acima, incluindo o padrão de tela de bloqueio (`Alert` tone `warning`) que já existia implicitamente em `LockedFeature`.

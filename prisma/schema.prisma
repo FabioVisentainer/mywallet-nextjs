@@ -12,6 +12,8 @@ datasource db {
 
 // role: "Investor" | "Analyst" | "Administrator"
 // status: "Active" | "Suspended" | "Pending"
+// accountType: "Individual" | "Institutional" — client segment, orthogonal to role and to plan (plan is session-only, see SessionContext).
+//   Institutional accounts unlock the institutional/ module (team + consolidated report) — a feature only some clients have.
 // passwordHash: "<saltHex>:<derivedKeyHex>", produced by src/lib/password.ts (scrypt) — never a plaintext password
 model User {
   id           String          @id
@@ -23,6 +25,7 @@ model User {
   perms        String
   since        String
   lastAccess   String
+  accountType  String          @default("Individual")
   activity     ActivityEntry[]
 }
 
@@ -90,4 +93,15 @@ model Transaction {
   qty    String
   price  Float
   total  Float
+}
+
+// Exclusive to the institutional/ module — operators with delegated access under an Institutional account.
+// Flat table, no owner FK: same simplification the prototype already uses for Wallet/Goal (single shared demo dataset).
+// roleInTeam: "Trader" | "Compliance" | "Viewer"
+model TeamMember {
+  id         String @id
+  name       String
+  email      String
+  roleInTeam String
+  since      String
 }

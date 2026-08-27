@@ -20,6 +20,7 @@ src/
 │   ├── news/                 # portal de notícias + estúdio do analista (ArticleForm)
 │   ├── admin/                # gestão de usuários
 │   ├── plans/                 # planos Standard/Platinum/Black + regras de bloqueio
+│   ├── institutional/          # mesa institucional (equipe + relatório consolidado) — só clientes accountType="Institutional"
 │   └── quiz/                   # teste de perfil de investidor
 ├── mocks/
 │   ├── seed/                # dados de exemplo — só o prisma/seed.ts importa daqui
@@ -41,7 +42,19 @@ wallets/
     └── WalletFormModal.tsx           # modal de criar/renomear carteira
 ```
 
-Padrão repetido em `goals/`, `news/`, `admin/` (com pequenas variações — `transactions/` e `performance/` não têm Context porque não têm mutação feita pelo usuário, só um hook de busca `useTransactions`/`useMarketSeries`).
+Padrão repetido em `goals/`, `news/`, `admin/`, `institutional/` (com pequenas variações — `transactions/` e `performance/` não têm Context porque não têm mutação feita pelo usuário, só um hook de busca `useTransactions`/`useMarketSeries`).
+
+## Personalização em três eixos independentes
+
+Três mecanismos compostos, cada um resolvido por um hook central (nunca `if` espalhado pelas telas):
+
+| Eixo | O que controla | Fonte | Hook central |
+|---|---|---|---|
+| **role** (`investor`/`analyst`/`admin`) | o que a pessoa pode *fazer* | `User.role`, mapeado em `SessionContext` | `navFor(role, accountType)` em [`nav.ts`](../src/modules/core/nav.ts) |
+| **plan** (`Standard`/`Platinum`/`Black`) | o que a assinatura *libera* | estado de sessão (simulado, ver `/plans`) | `usePlanGating()` em [`plans/gating.ts`](../src/modules/plans/gating.ts) |
+| **accountType** (`Individual`/`Institutional`) | *módulo* exclusivo por segmento de cliente | `User.accountType` | `useInstitutionalAccess()` em [`institutional/access.ts`](../src/modules/institutional/access.ts) |
+
+`accountType` é o eixo que resolve o requisito de "nem todo cliente tem a mesma opção": só a conta seed `carla.mendes@mywallet.io` é `Institutional` e enxerga o item "Institutional desk" no menu — para as demais o módulo simplesmente não existe. Igual a `wallets/`, `institutional/` só depende de `core` (mais uma leitura pontual de `useWallets` no relatório consolidado, precedente documentado abaixo com `analyst`/`NewsContext`) — dá pra extrair `core/` + `institutional/` e vender essa mesa isolada a um cliente que só precisa dela.
 
 ## Camadas de estado — de onde vêm os dados
 
@@ -94,6 +107,8 @@ Nenhuma página lê o Prisma diretamente — sempre passa pela rota de API, mesm
 | `/admin` | `admin/page.tsx` | admin |
 | `/admin/[id]` | `admin/[id]/page.tsx` | admin |
 | `/plans` | `plans/page.tsx` | plans |
+| `/institutional` | `institutional/page.tsx` | institutional — exclusivo `accountType="Institutional"`, mostra bloqueio para os demais |
+| `/institutional/reports` | `institutional/reports/page.tsx` | institutional — idem, agrega dados de `wallets` |
 
 ### API interna — `src/app/api/`
 CRUD real contra o SQLite:
@@ -102,6 +117,7 @@ CRUD real contra o SQLite:
 - `goals/route.ts`, `goals/[id]/route.ts`
 - `articles/route.ts`, `articles/[id]/route.ts`
 - `users/route.ts`, `users/[id]/route.ts`
+- `team/route.ts`, `team/[id]/route.ts` (CRUD de `TeamMember`, consumido só por `institutional/`)
 - `transactions/route.ts` (só leitura)
 - `auth/login/route.ts`, `auth/signup/route.ts`
 

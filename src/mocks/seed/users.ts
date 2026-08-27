@@ -4,14 +4,15 @@
 // Every seeded account shares the same demo password for convenience: demo1234
 
 export const users = [
-  { id: "u1", name: "Ana Souza", email: "ana.souza@mywallet.io", password: "demo1234", role: "Investor", status: "Active", last: "2026-08-11", since: "Mar 2024", perms: "Wallets, goals, market data" },
-  { id: "u2", name: "Rafael Prado", email: "rafael.prado@mywallet.io", password: "demo1234", role: "Analyst", status: "Active", last: "2026-08-11", since: "Sep 2023", perms: "Publish news, market data" },
-  { id: "u3", name: "Marcos Lima", email: "marcos.lima@mywallet.io", password: "demo1234", role: "Administrator", status: "Active", last: "2026-08-10", since: "Jan 2023", perms: "Full system access" },
-  { id: "u4", name: "Beatriz Nunes", email: "bia.nunes@gmail.com", password: "demo1234", role: "Investor", status: "Active", last: "2026-08-09", since: "Nov 2025", perms: "Wallets, goals, market data" },
-  { id: "u5", name: "Caio Ferreira", email: "caio.f@outlook.com", password: "demo1234", role: "Investor", status: "Suspended", last: "2026-06-21", since: "Feb 2025", perms: "Read only" },
-  { id: "u6", name: "Helena Rocha", email: "helena.rocha@mywallet.io", password: "demo1234", role: "Analyst", status: "Active", last: "2026-08-07", since: "May 2024", perms: "Publish news, market data" },
-  { id: "u7", name: "Diego Martins", email: "diego.martins@gmail.com", password: "demo1234", role: "Investor", status: "Pending", last: "—", since: "Aug 2026", perms: "Awaiting email confirmation" },
-  { id: "u8", name: "Larissa Alves", email: "larissa.alves@uol.com.br", password: "demo1234", role: "Investor", status: "Active", last: "2026-08-11", since: "Jun 2025", perms: "Wallets, goals, market data" },
+  { id: "u1", name: "Ana Souza", email: "ana.souza@mywallet.io", password: "demo1234", role: "Investor", status: "Active", last: "2026-08-11", since: "Mar 2024", perms: "Wallets, goals, market data", accountType: "Individual" },
+  { id: "u2", name: "Rafael Prado", email: "rafael.prado@mywallet.io", password: "demo1234", role: "Analyst", status: "Active", last: "2026-08-11", since: "Sep 2023", perms: "Publish news, market data", accountType: "Individual" },
+  { id: "u3", name: "Marcos Lima", email: "marcos.lima@mywallet.io", password: "demo1234", role: "Administrator", status: "Active", last: "2026-08-10", since: "Jan 2023", perms: "Full system access", accountType: "Individual" },
+  { id: "u4", name: "Beatriz Nunes", email: "bia.nunes@gmail.com", password: "demo1234", role: "Investor", status: "Active", last: "2026-08-09", since: "Nov 2025", perms: "Wallets, goals, market data", accountType: "Individual" },
+  { id: "u5", name: "Caio Ferreira", email: "caio.f@outlook.com", password: "demo1234", role: "Investor", status: "Suspended", last: "2026-06-21", since: "Feb 2025", perms: "Read only", accountType: "Individual" },
+  { id: "u6", name: "Helena Rocha", email: "helena.rocha@mywallet.io", password: "demo1234", role: "Analyst", status: "Active", last: "2026-08-07", since: "May 2024", perms: "Publish news, market data", accountType: "Individual" },
+  { id: "u7", name: "Diego Martins", email: "diego.martins@gmail.com", password: "demo1234", role: "Investor", status: "Pending", last: "—", since: "Aug 2026", perms: "Awaiting email confirmation", accountType: "Individual" },
+  { id: "u8", name: "Larissa Alves", email: "larissa.alves@uol.com.br", password: "demo1234", role: "Investor", status: "Active", last: "2026-08-11", since: "Jun 2025", perms: "Wallets, goals, market data", accountType: "Individual" },
+  { id: "u9", name: "Carla Mendes", email: "carla.mendes@mywallet.io", password: "demo1234", role: "Investor", status: "Active", last: "2026-08-12", since: "Jan 2026", perms: "Wallets, goals, market data, institutional desk", accountType: "Institutional" },
 ];
 
 export const activity: Record<string, { text: string; when: string }[]> = {
@@ -36,4 +37,9 @@ export const activity: Record<string, { text: string; when: string }[]> = {
   u6: [{ text: "Signed in from Belo Horizonte, BR", when: "2026-08-07 07:55" }, { text: "Account created", when: "2024-05-20 13:10" }],
   u7: [{ text: "Account created — email confirmation pending", when: "2026-08-05 17:44" }],
   u8: [{ text: "Signed in from Fortaleza, BR", when: "2026-08-11 06:30" }, { text: "Account created", when: "2025-06-18 09:15" }],
+  u9: [
+    { text: "Added Diego Martins as Trader on the institutional desk", when: "2026-08-12 11:05" },
+    { text: "Signed in from São Paulo, BR", when: "2026-08-12 08:50" },
+    { text: "Account created — Institutional account", when: "2026-01-14 09:30" },
+  ],
 };

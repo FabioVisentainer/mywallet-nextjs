@@ -56,6 +56,7 @@ Contas do sistema — tanto quem faz login quanto os usuários gerenciados na te
 | `perms` | String | texto livre exibido na tabela de admin (não é a fonte de verdade das permissões — essas ficam só no client, ver `AdminContext`) |
 | `since` | String | ex.: `"Mar 2024"` |
 | `lastAccess` | String | ex.: `"2026-08-11"` |
+| `accountType` | String | `"Individual"` (padrão) \| `"Institutional"` — segmento de cliente, independente de `role` e do plano de assinatura. Controla só o acesso ao módulo `institutional/` (ver `useInstitutionalAccess`) |
 
 Relação: um `User` tem várias `ActivityEntry` (`onDelete: Cascade`).
 
@@ -117,6 +118,16 @@ Ledger histórico de operações (somente leitura na UI hoje, sem tela de criaç
 | `type` | String | `"Buy"` \| `"Sell"` \| `"Swap"` \| `"Deposit"` |
 | `price`, `total` | Float | |
 
+### `TeamMember`
+Operadores com acesso delegado na mesa institucional (`institutional/`) — exclusivo de contas `accountType="Institutional"`. Tabela plana, sem FK para `User` (mesma simplificação que `Wallet`/`Goal` já usam hoje: um único conjunto de dados de demonstração compartilhado, não multi-tenant de verdade).
+
+| Campo | Tipo | Observação |
+|---|---|---|
+| `id` | String (PK) | |
+| `name`, `email` | String | |
+| `roleInTeam` | String | `"Trader"` \| `"Compliance"` \| `"Viewer"` |
+| `since` | String | |
+
 ## Senhas e autenticação
 
 Hash com **scrypt** (`node:crypto`, sem dependência externa), implementado em [`src/lib/password.ts`](../src/lib/password.ts):
@@ -135,6 +146,7 @@ Toda conta populada pelo seed usa a mesma senha, só para facilitar testes locai
 | ana.souza@mywallet.io | Investor | `demo1234` |
 | rafael.prado@mywallet.io | Analyst | `demo1234` |
 | marcos.lima@mywallet.io | Administrator | `demo1234` |
+| carla.mendes@mywallet.io | Investor, **accountType Institutional** — única conta com acesso à mesa institucional | `demo1234` |
 | (+ 5 outras contas de exemplo, mesma senha) | Investor/Analyst | `demo1234` |
 
 Contas criadas pela tela de cadastro (`/signup`) usam a senha escolhida pelo usuário, com hash real — nada de senha fixa aí.

@@ -6,12 +6,12 @@ import { useSession } from "../SessionContext";
 import { navFor } from "../nav";
 
 export function Sidebar() {
-  const { role, user, logout } = useSession();
+  const { role, accountType, user, logout } = useSession();
   const pathname = usePathname();
   const router = useRouter();
 
   if (!role || !user) return null;
-  const nav = navFor(role);
+  const nav = navFor(role, accountType);
 
   return (
     <div className="w-[248px] shrink-0 bg-[var(--color-ink)] text-white flex flex-col p-4 gap-6 sticky top-0 h-screen">

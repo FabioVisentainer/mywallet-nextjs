@@ -3,13 +3,14 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { apiFetch } from "@/lib/apiClient";
 import { initials as computeInitials } from "./format";
-import type { PlanName, Role } from "./types";
+import type { AccountType, PlanName, Role } from "./types";
 
 interface SessionUser {
   id: string;
   name: string;
   email: string;
   role: NonNullable<Role>;
+  accountType: AccountType;
   initials: string;
   roleLabel: string;
 }
@@ -28,12 +29,13 @@ function toAppRole(dbRole: string): NonNullable<Role> {
 }
 
 interface LoginResult {
-  user: { id: string; name: string; email: string; role: string };
+  user: { id: string; name: string; email: string; role: string; accountType: string };
 }
 
 interface SessionContextValue {
   role: Role;
   plan: PlanName;
+  accountType: AccountType | null;
   user: SessionUser | null;
   login: (email: string, password: string) => Promise<SessionUser>;
   logout: () => void;
@@ -57,6 +59,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       name: dbUser.name,
       email: dbUser.email,
       role,
+      accountType: dbUser.accountType === "Institutional" ? "Institutional" : "Individual",
       initials: computeInitials(dbUser.name),
       roleLabel: ROLE_LABEL[role],
     };
@@ -70,6 +73,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     () => ({
       role: user?.role ?? null,
       plan,
+      accountType: user?.accountType ?? null,
       user,
       login,
       logout,

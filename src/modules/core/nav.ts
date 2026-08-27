@@ -1,4 +1,4 @@
-import type { Role } from "./types";
+import type { AccountType, Role } from "./types";
 
 export interface NavItem {
   href: string;
@@ -29,7 +29,11 @@ const navDefs: Record<NonNullable<Role>, NavItem[]> = {
   ],
 };
 
-export function navFor(role: Role): NavItem[] {
+// Appended to a role's nav only for clients on the Institutional segment — orthogonal to role and to plan.
+const institutionalItem: NavItem = { href: "/institutional", label: "Institutional desk", icon: "◆", matchPrefixes: ["/institutional"] };
+
+export function navFor(role: Role, accountType?: AccountType | null): NavItem[] {
   if (!role) return [];
-  return navDefs[role];
+  const base = navDefs[role];
+  return accountType === "Institutional" ? [...base, institutionalItem] : base;
 }

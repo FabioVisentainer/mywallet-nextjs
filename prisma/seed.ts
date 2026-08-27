@@ -6,6 +6,7 @@ import { goals } from "../src/mocks/seed/goals";
 import { articles } from "../src/mocks/seed/articles";
 import { users, activity } from "../src/mocks/seed/users";
 import { transactions } from "../src/mocks/seed/transactions";
+import { teamMembers } from "../src/mocks/seed/team";
 import { hashPassword } from "../src/lib/password";
 
 const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL || "file:./dev.db" });
@@ -18,6 +19,7 @@ async function main() {
   await prisma.goal.deleteMany();
   await prisma.article.deleteMany();
   await prisma.transaction.deleteMany();
+  await prisma.teamMember.deleteMany();
   await prisma.user.deleteMany();
 
   for (const w of wallets) await prisma.wallet.create({ data: w });
@@ -25,6 +27,7 @@ async function main() {
   for (const g of goals) await prisma.goal.create({ data: g });
   for (const a of articles) await prisma.article.create({ data: a });
   for (const t of transactions) await prisma.transaction.create({ data: t });
+  for (const t of teamMembers) await prisma.teamMember.create({ data: t });
 
   for (const u of users) {
     await prisma.user.create({
@@ -38,13 +41,14 @@ async function main() {
         perms: u.perms,
         since: u.since,
         lastAccess: u.last,
+        accountType: u.accountType,
         activity: { create: (activity[u.id] || []).map((entry) => ({ text: entry.text, when: entry.when })) },
       },
     });
   }
 
   console.log(
-    `Seeded ${wallets.length} wallets, ${assets.length} assets, ${goals.length} goals, ${articles.length} articles, ${transactions.length} transactions, ${users.length} users.`
+    `Seeded ${wallets.length} wallets, ${assets.length} assets, ${goals.length} goals, ${articles.length} articles, ${transactions.length} transactions, ${teamMembers.length} team members, ${users.length} users.`
   );
 }
 
