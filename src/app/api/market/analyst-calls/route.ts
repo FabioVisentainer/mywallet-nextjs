@@ -1,6 +1,7 @@
-import { analystCalls } from "@/mocks/external/analystCalls";
+import { MarketDataGateway } from "@/lib/marketDataGateway";
 
-// Simulated external research/recommendations feed.
+// Simulated external research/recommendations feed, via the MarketDataGateway singleton.
 export async function GET() {
-  return Response.json({ calls: analystCalls });
+  const calls = MarketDataGateway.getInstance().getAnalystCalls();
+  return Response.json({ calls });
 }

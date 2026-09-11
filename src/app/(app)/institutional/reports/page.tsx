@@ -10,6 +10,7 @@ import { useWallets } from "@/modules/wallets/WalletsContext";
 import { useInstitutionalAccess } from "@/modules/institutional/access";
 import { useToast } from "@/modules/core/ToastContext";
 import { usd, posColor, pctStr } from "@/modules/core/format";
+import { getReportExportStrategy } from "@/modules/institutional/reportExportStrategy";
 
 export default function InstitutionalReportsPage() {
   const { isInstitutional } = useInstitutionalAccess();
@@ -44,7 +45,12 @@ export default function InstitutionalReportsPage() {
   const totalCost = rows.reduce((s, r) => s + r.cost, 0);
   const totalPnl = totalCost > 0 ? ((totalValue - totalCost) / totalCost) * 100 : 0;
 
-  const exportFacade = (kind: string) => showToast(`${kind} export queued — a compliance officer will receive it by email. (Demo — no file is generated.)`);
+  const exportFacade = (kind: "CSV" | "PDF") => {
+    const strategy = getReportExportStrategy(kind);
+    const payload = strategy.build(rows.map((r) => ({ wallet: r.wallet.name, value: r.value, cost: r.cost, pnl: r.pnl })));
+    const lineCount = payload.split("\n").length;
+    showToast(`${strategy.label} report generated (${lineCount} lines) — a compliance officer will receive it by email. (Demo — no file is generated.)`);
+  };
 
   return (
     <AppPage title="Consolidated report" subtitle="All wallets on this desk, aggregated" backHref="/institutional">

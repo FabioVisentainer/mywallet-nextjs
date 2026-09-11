@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getQuote } from "@/mocks/external/quotes";
+import { MarketDataGateway } from "@/lib/marketDataGateway";
 import type { Asset } from "@/modules/wallets/types";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string; assetId: string }> }) {
@@ -28,7 +28,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     type: updated.type as Asset["type"],
     qty: updated.qty,
     avg: updated.avg,
-    price: getQuote(updated.ticker, updated.avg),
+    price: MarketDataGateway.getInstance().getQuote(updated.ticker, updated.avg),
   };
   return Response.json({ asset });
 }

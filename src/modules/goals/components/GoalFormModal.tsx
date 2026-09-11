@@ -5,6 +5,7 @@ import { Modal } from "@/modules/core/components/Modal";
 import { Input } from "@/modules/core/components/Input";
 import { Button } from "@/modules/core/components/Button";
 import { ApiError } from "@/lib/apiClient";
+import { FormSubmitTemplate } from "@/lib/formSubmitTemplate";
 import type { GoalInput } from "../types";
 
 interface Props {
@@ -15,6 +16,29 @@ interface Props {
 }
 
 type Errors = Partial<Record<keyof GoalInput, string>>;
+
+/** TEMPLATE METHOD — passos variáveis para o envio do formulário de metas (ver FormSubmitTemplate). */
+class GoalFormSubmit extends FormSubmitTemplate<GoalInput, Errors> {
+  constructor(private onSave: (input: GoalInput) => Promise<void>) {
+    super();
+  }
+
+  protected validate(form: GoalInput): Errors | null {
+    const e: Errors = {};
+    if (!form.name.trim()) e.name = "Name the goal.";
+    if (!form.target || !(parseFloat(form.target) > 0)) e.target = "Enter a target amount.";
+    if (!form.due.trim()) e.due = "Set a deadline.";
+    return Object.keys(e).length ? e : null;
+  }
+
+  protected async save(form: GoalInput) {
+    await this.onSave(form);
+  }
+
+  protected mapError(err: unknown): Errors {
+    return err instanceof ApiError && err.errors ? (err.errors as Errors) : {};
+  }
+}
 
 export function GoalFormModal({ title, initial, onSave, onClose }: Props) {
   const [form, setForm] = useState<GoalInput>(initial);
@@ -27,22 +51,8 @@ export function GoalFormModal({ title, initial, onSave, onClose }: Props) {
   };
 
   const save = async () => {
-    const e: Errors = {};
-    if (!form.name.trim()) e.name = "Name the goal.";
-    if (!form.target || !(parseFloat(form.target) > 0)) e.target = "Enter a target amount.";
-    if (!form.due.trim()) e.due = "Set a deadline.";
-    if (Object.keys(e).length) {
-      setErrors(e);
-      return;
-    }
-    setSaving(true);
-    try {
-      await onSave(form);
-    } catch (err) {
-      if (err instanceof ApiError && err.errors) setErrors(err.errors as Errors);
-    } finally {
-      setSaving(false);
-    }
+    const result = await new GoalFormSubmit(onSave).submit(form, setSaving);
+    setErrors(result ?? {});
   };
 
   return (

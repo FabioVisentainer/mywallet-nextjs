@@ -2,6 +2,8 @@
 
 Documento da atividade: (1) inventário das interfaces de alta variação do protótipo, (2) a função exclusiva de um cliente específico e como ela fica isolada das demais, e (3) a pesquisa da arquitetura de desenvolvimento mais adequada ao projeto para alta personalização com foco em reuso.
 
+Ver também [`2 - DESIGN_PATTERNS.md`](2%20-%20DESIGN_PATTERNS.md): os hooks de gating descritos aqui (item 4.4) passaram a ser implementados com o padrão **Strategy**, e dois outros pontos de variação do produto — fora do eixo role/plan/accountType — foram formalizados com o mesmo padrão.
+
 ## 1. Três eixos de personalização, não um só
 
 A atividade permite variar por função em tela, por usuário com acesso específico, ou por módulo exclusivo de cliente. O MyWallet usa os três ao mesmo tempo, como camadas **independentes e compostas** — cada uma resolvida por um hook central, nunca por `if`s espalhados pelas telas:
@@ -13,6 +15,8 @@ A atividade permite variar por função em tela, por usuário com acesso especí
 | **accountType** — `Individual` \| `Institutional` | Esse cliente tem acesso a este *módulo inteiro*? | `User.accountType` (banco) | [`useInstitutionalAccess()`](../src/modules/institutional/access.ts) |
 
 `role` e `plan` já existiam no projeto. `accountType` foi adicionado para atender literalmente o requisito "nem todos os clientes terão a mesma opção": é o único eixo dos três que não depende de quem a pessoa é (role) nem de quanto ela paga (plan) — depende só de qual *segmento de cliente* ela é, exatamente como uma feature enterprise-only num SaaS B2B.
+
+> **Atualização:** o eixo `plan` deixou de ser um `if (plan === "Standard")` central e passou a ser **Strategy** — uma classe `PlanPolicy` por plano (`StandardPlanPolicy`, `PlatinumPlanPolicy`, `BlackPlanPolicy`) atrás da mesma interface, resolvida dentro do próprio `usePlanGating()`. A assinatura pública do hook não mudou, então nenhuma tela precisou ser tocada. Detalhe em [`2 - DESIGN_PATTERNS.md`](2%20-%20DESIGN_PATTERNS.md#3-strategy-3-exemplos--3-domínios-diferentes). O eixo `accountType` (`useInstitutionalAccess()`) continua sendo um booleano simples — só duas variações (institucional ou não) não justificam uma classe por variação; se um terceiro segmento aparecer, aí sim vale revisitar como Strategy.
 
 ## 2. As 15 interfaces de alta variação
 
@@ -63,8 +67,10 @@ O banco físico (SQLite) é o menos importante da escolha — o que importa é a
 ### 4.3 Padrão de interfaces: design system central
 Todo componente visual reutilizável mora em `src/modules/core/components/` (catálogo em `DESIGN_SYSTEM.md`) e é consumido por todos os módulos de feature — nenhuma tela reimplementa botão, badge, card ou campo de formulário. O documento do próprio projeto já registra o "antes": cada tela reimplementava as mesmas classes Tailwind com pequenas variações de altura/cor/borda. É o motivo pelo qual as 15 interfaces do item 2 têm alta variação de *conteúdo* e *fluxo*, mas identidade visual consistente — reuso sem engessar a personalização.
 
-### 4.4 Padrão de personalização: hooks de "gating" centralizados
+### 4.4 Padrão de personalização: hooks de "gating" centralizados, formalizados com Strategy
 `usePlanGating()` e `useInstitutionalAccess()` (item 1) são o padrão que dá reuso real a regras de acesso: a regra de negócio ("Standard não vê metas", "só Institutional vê a mesa") vive em um lugar, e cada tela só pergunta um booleano. Evoluir esse padrão para algo mais robusto (ex.: um serviço de feature flags tipo LaunchDarkly/Unleash) seria o próximo passo natural se o número de eixos crescesse muito — mas para 2-3 eixos, um hook por módulo é mais simples e igualmente reusável.
+
+Dentro de `usePlanGating()`, essa regra de negócio agora é o padrão **Strategy** (ver [`2 - DESIGN_PATTERNS.md`](2%20-%20DESIGN_PATTERNS.md)): cada plano é uma classe `PlanPolicy` própria, e o hook só resolve qual classe usar. A mesma ideia — variar um comportamento por eixo, sem `if` central — reaparece em outros dois pontos do produto que não são personalização por cliente, mas são a mesma força arquitetural: qual perfil de investidor o score do quiz indica (`quiz/profileStrategy.ts`) e como serializar o relatório consolidado por formato (`institutional/reportExportStrategy.ts`). Os três são exemplos independentes do mesmo padrão, não o mesmo código reaproveitado três vezes.
 
 ### 4.5 Arquitetura geral: monólito modular por domínio
 `src/modules/<domínio>/`, não `src/{components,hooks,services}/` por tipo de arquivo. Cada módulo de feature só depende de `core`. Alternativas consideradas e descartadas para este projeto:

@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { quiz, profiles, type InvestorProfile } from "./data";
+import { quiz, type InvestorProfile } from "./data";
+import { resolveInvestorProfile } from "./profileStrategy";
 
 interface QuizContextValue {
   quizIdx: number;
@@ -36,8 +37,8 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     let raw = 0;
     for (let i = 0; i < quiz.length; i++) raw += quizAnswers[i] === undefined ? 1 : quizAnswers[i];
     const s = Math.round((raw / (quiz.length * 3)) * 100);
-    const key = s < 40 ? "Conservative" : s < 70 ? "Moderate" : "Aggressive";
-    return { score: s, profileKey: key as "Conservative" | "Moderate" | "Aggressive", profile: profiles[key as "Conservative" | "Moderate" | "Aggressive"] };
+    const strategy = resolveInvestorProfile(s);
+    return { score: s, profileKey: strategy.key, profile: strategy.profile };
   }, [quizAnswers]);
 
   const value = useMemo<QuizContextValue>(

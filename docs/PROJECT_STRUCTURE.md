@@ -1,6 +1,6 @@
 # Estrutura do projeto — MyWallet
 
-Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + Prisma/SQLite. Ver também [`DATABASE.md`](./DATABASE.md) para o schema do banco e [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) para o catálogo de componentes visuais (`Button`, `Badge`, `Card`, `Input`, etc.).
+Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + Prisma/SQLite. Ver também [`DATABASE.md`](./DATABASE.md) para o schema do banco, [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) para o catálogo de componentes visuais (`Button`, `Badge`, `Card`, `Input`, etc.) e [`2 - DESIGN_PATTERNS.md`](2%20-%20DESIGN_PATTERNS.md) para os design patterns (Singleton, Template Method, Strategy) aplicados no `lib/` e em alguns módulos.
 
 ## Ideia central: módulos separados por domínio
 
@@ -25,7 +25,7 @@ src/
 ├── mocks/
 │   ├── seed/                # dados de exemplo — só o prisma/seed.ts importa daqui
 │   └── external/              # simula APIs externas (cotações, câmbio, etc.) — só as rotas /api/market/* importam daqui
-├── lib/                      # prisma client singleton, hash de senha, cliente fetch da API
+├── lib/                      # prisma client singleton, market data gateway (singleton), api resource loader e form-submit (template method), validated create handler, hash de senha, cliente fetch da API — ver DESIGN_PATTERNS.md
 └── generated/prisma/          # código gerado pelo Prisma — não editar, não versionar
 ```
 
@@ -43,6 +43,8 @@ wallets/
 ```
 
 Padrão repetido em `goals/`, `news/`, `admin/`, `institutional/` (com pequenas variações — `transactions/` e `performance/` não têm Context porque não têm mutação feita pelo usuário, só um hook de busca `useTransactions`/`useMarketSeries`).
+
+Duas exceções ganharam um arquivo de "regra" isolado do resto do módulo, no padrão Strategy (ver `2 - DESIGN_PATTERNS.md`): `quiz/profileStrategy.ts` (decide qual perfil de investidor o score indica) e `institutional/reportExportStrategy.ts` (decide como serializar o relatório consolidado por formato).
 
 ## Personalização em três eixos independentes
 
@@ -114,14 +116,14 @@ Nenhuma página lê o Prisma diretamente — sempre passa pela rota de API, mesm
 CRUD real contra o SQLite:
 
 - `wallets/route.ts`, `wallets/[id]/route.ts`, `wallets/[id]/assets/route.ts`, `wallets/[id]/assets/[assetId]/route.ts`
-- `goals/route.ts`, `goals/[id]/route.ts`
+- `goals/route.ts` (o `POST` usa `ValidatedCreateHandler`, ver `2 - DESIGN_PATTERNS.md`), `goals/[id]/route.ts`
 - `articles/route.ts`, `articles/[id]/route.ts`
 - `users/route.ts`, `users/[id]/route.ts`
-- `team/route.ts`, `team/[id]/route.ts` (CRUD de `TeamMember`, consumido só por `institutional/`)
+- `team/route.ts` (o `POST` também usa `ValidatedCreateHandler`), `team/[id]/route.ts` (CRUD de `TeamMember`, consumido só por `institutional/`)
 - `transactions/route.ts` (só leitura)
 - `auth/login/route.ts`, `auth/signup/route.ts`
 
-Dados "de mercado" (mockados, ver `DATABASE.md`):
+Dados "de mercado" (mockados, ver `DATABASE.md`), todas passando pelo singleton `MarketDataGateway` (ver `2 - DESIGN_PATTERNS.md`):
 - `market/rates/route.ts`, `market/performance/route.ts`, `market/analyst-calls/route.ts`
 
 ## Módulo `core` (fundação compartilhada)

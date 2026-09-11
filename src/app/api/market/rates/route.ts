@@ -1,6 +1,7 @@
-import { currencyRates } from "@/mocks/external/rates";
+import { MarketDataGateway } from "@/lib/marketDataGateway";
 
-// Simulated external FX-rates provider response.
+// Simulated external FX-rates provider response, via the MarketDataGateway singleton.
 export async function GET() {
-  return Response.json({ rates: currencyRates });
+  const rates = MarketDataGateway.getInstance().getCurrencyRates();
+  return Response.json({ rates });
 }

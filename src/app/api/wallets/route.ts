@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getQuote } from "@/mocks/external/quotes";
+import { MarketDataGateway } from "@/lib/marketDataGateway";
 import type { Asset } from "@/modules/wallets/types";
 
 function serializeAsset(a: { id: string; ticker: string; name: string; type: string; qty: number; avg: number }): Asset {
@@ -10,7 +10,7 @@ function serializeAsset(a: { id: string; ticker: string; name: string; type: str
     type: a.type as Asset["type"],
     qty: a.qty,
     avg: a.avg,
-    price: getQuote(a.ticker, a.avg),
+    price: MarketDataGateway.getInstance().getQuote(a.ticker, a.avg),
   };
 }
 

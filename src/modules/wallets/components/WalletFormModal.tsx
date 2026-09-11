@@ -5,6 +5,7 @@ import { Modal } from "@/modules/core/components/Modal";
 import { Input } from "@/modules/core/components/Input";
 import { Button } from "@/modules/core/components/Button";
 import { ApiError } from "@/lib/apiClient";
+import { FormSubmitTemplate } from "@/lib/formSubmitTemplate";
 
 interface Props {
   title: string;
@@ -13,21 +14,29 @@ interface Props {
   onClose: () => void;
 }
 
+/** TEMPLATE METHOD — passos variáveis para o envio do formulário de carteira (ver FormSubmitTemplate). */
+class WalletFormSubmit extends FormSubmitTemplate<string, string> {
+  constructor(private onSave: (name: string) => Promise<void>) {
+    super();
+  }
+
+  protected async save(name: string) {
+    await this.onSave(name);
+  }
+
+  protected mapError(err: unknown): string {
+    return err instanceof ApiError ? err.message : "Something went wrong. Please try again.";
+  }
+}
+
 export function WalletFormModal({ title, initial = "", onSave, onClose }: Props) {
   const [draft, setDraft] = useState(initial);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   const save = async () => {
-    setSaving(true);
-    setError("");
-    try {
-      await onSave(draft.trim());
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Something went wrong. Please try again.");
-    } finally {
-      setSaving(false);
-    }
+    const err = await new WalletFormSubmit(onSave).submit(draft.trim(), setSaving);
+    setError(err ?? "");
   };
 
   return (
