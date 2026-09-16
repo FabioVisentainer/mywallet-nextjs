@@ -11,6 +11,7 @@ import { LockedFeature } from "@/modules/plans/components/LockedFeature";
 import { useToast } from "@/modules/core/ToastContext";
 import { typeStyle, type TxType } from "@/modules/transactions/data";
 import { useTransactions } from "@/modules/transactions/useTransactions";
+import { BrokerImportPanel } from "@/modules/transactions/components/BrokerImportPanel";
 import { usd, posColor } from "@/modules/core/format";
 
 const filters: (TxType | "All")[] = ["All", "Buy", "Sell", "Swap", "Deposit"];
@@ -18,7 +19,7 @@ const filters: (TxType | "All")[] = ["All", "Buy", "Sell", "Swap", "Deposit"];
 export default function TransactionsPage() {
   const gating = usePlanGating();
   const { showToast } = useToast();
-  const { transactions, loading } = useTransactions();
+  const { transactions, loading, refetch } = useTransactions();
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
 
   if (gating.transactionsLocked) {
@@ -46,6 +47,8 @@ export default function TransactionsPage() {
   return (
     <AppPage title="Transactions & swaps" subtitle="Personal audit trail">
       <div className="flex flex-col gap-4 max-w-[1240px]">
+        <BrokerImportPanel onImported={refetch} />
+
         <div className="flex justify-between items-center gap-4 flex-wrap">
           <div className="flex gap-1.5 bg-[var(--color-border-3)] p-1 rounded-[10px]">
             {filters.map((f) => {

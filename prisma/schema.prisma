@@ -16,17 +16,47 @@ datasource db {
 //   Institutional accounts unlock the institutional/ module (team + consolidated report) — a feature only some clients have.
 // passwordHash: "<saltHex>:<derivedKeyHex>", produced by src/lib/password.ts (scrypt) — never a plaintext password
 model User {
-  id           String          @id
-  name         String
-  email        String          @unique
-  passwordHash String
-  role         String
-  status       String
-  perms        String
-  since        String
-  lastAccess   String
-  accountType  String          @default("Individual")
-  activity     ActivityEntry[]
+  id             String                   @id
+  name           String
+  email          String                   @unique
+  passwordHash   String
+  role           String
+  status         String
+  perms          String
+  since          String
+  lastAccess     String
+  accountType    String                   @default("Individual")
+  activity       ActivityEntry[]
+  resetTokens    PasswordResetToken[]
+  profileResults InvestorProfileResult[]
+}
+
+// Recuperação de senha (Req. 3): token único com validade, gerado ao pedir o link
+// e consumido (usedAt preenchido) ao redefinir a senha. Mantido pela própria
+// aplicação -> ALI. O e-mail com o link é "enviado" por um provedor externo
+// simulado, ver src/mocks/external/emailProvider.ts.
+model PasswordResetToken {
+  id        String  @id
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String  @unique
+  expiresAt String
+  usedAt    String?
+  createdAt String
+}
+
+// Resultado do teste de perfil de investidor (Req. 6). score: 0-100;
+// profileKey: "Conservative" | "Moderate" | "Aggressive"; answers: respostas
+// selecionadas, codificadas em JSON. Cada nova tentativa ("refazer o teste")
+// grava um novo registro, preservando o histórico.
+model InvestorProfileResult {
+  id          String @id
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score       Int
+  profileKey  String
+  answers     String
+  completedAt String
 }
 
 model ActivityEntry {
@@ -84,15 +114,18 @@ model Article {
 }
 
 // type: "Buy" | "Sell" | "Swap" | "Deposit"
+// externalRef: id do registro de origem no feed de swaps da corretora externa
+// (src/mocks/external/brokerFeed.ts), quando a transação foi importada de lá; null para lançamentos manuais.
 model Transaction {
-  id     String @id
-  date   String
-  type   String
-  asset  String
-  wallet String
-  qty    String
-  price  Float
-  total  Float
+  id          String  @id
+  date        String
+  type        String
+  asset       String
+  wallet      String
+  qty         String
+  price       Float
+  total       Float
+  externalRef String?
 }
 
 // Exclusive to the institutional/ module — operators with delegated access under an Institutional account.

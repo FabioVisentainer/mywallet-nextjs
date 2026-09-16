@@ -2,6 +2,8 @@ import { currencyRates, type CurrencyRate } from "@/mocks/external/rates";
 import { getQuote } from "@/mocks/external/quotes";
 import { months, series, benchSeries } from "@/mocks/external/performance";
 import { analystCalls } from "@/mocks/external/analystCalls";
+import { getAssetReference, type AssetReference } from "@/mocks/external/assetReference";
+import { getPendingBrokerSwaps, getBrokerSwapById, type BrokerSwap } from "@/mocks/external/brokerFeed";
 
 export interface MarketSeriesData {
   months: string[];
@@ -13,7 +15,8 @@ export interface MarketSeriesData {
  * SINGLETON — exemplo 2 de 2.
  *
  * Ponto único de acesso aos provedores externos de dados de mercado
- * (cotações, taxas de câmbio, histórico de performance e recomendações de analistas).
+ * (cotações, taxas de câmbio, histórico de performance, recomendações de
+ * analistas, dados de referência de ativos e feed de swaps de corretora).
  *
  * Por quê: antes deste gateway, cada rota de API importava um mock diferente
  * diretamente (@/mocks/external/quotes, /rates, /performance, /analystCalls).
@@ -49,5 +52,17 @@ export class MarketDataGateway {
 
   getAnalystCalls(): typeof analystCalls {
     return analystCalls;
+  }
+
+  getAssetReference(ticker: string): AssetReference {
+    return getAssetReference(ticker);
+  }
+
+  getPendingBrokerSwaps(importedIds: string[]): BrokerSwap[] {
+    return getPendingBrokerSwaps(importedIds);
+  }
+
+  getBrokerSwapById(id: string): BrokerSwap | undefined {
+    return getBrokerSwapById(id);
   }
 }

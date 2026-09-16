@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuiz } from "@/modules/quiz/QuizContext";
+import { useSession } from "@/modules/core/SessionContext";
+import { apiFetch } from "@/lib/apiClient";
 import { profiles } from "@/modules/quiz/data";
 import { Card } from "@/modules/core/components/Card";
 import { Badge } from "@/modules/core/components/Badge";
@@ -11,8 +14,23 @@ import { Button } from "@/modules/core/components/Button";
 const scaleOrder: (keyof typeof profiles)[] = ["Conservative", "Moderate", "Aggressive"];
 
 export default function QuizResultPage() {
-  const { score, profileKey, profile, reset } = useQuiz();
+  const { score, profileKey, profile, reset, quizAnswers } = useQuiz();
+  const { user } = useSession();
   const router = useRouter();
+  const saved = useRef(false);
+
+  // Req. 6 — Teste de Perfil de Investidor: cada teste concluído ("realizar"
+  // ou "refazer") vira um novo InvestorProfileResult, preservando o histórico.
+  useEffect(() => {
+    if (saved.current || !user) return;
+    saved.current = true;
+    apiFetch("/api/quiz/result", {
+      method: "POST",
+      body: JSON.stringify({ userId: user.id, score, profileKey, answers: quizAnswers }),
+    }).catch(() => {
+      saved.current = false;
+    });
+  }, [user, score, profileKey, quizAnswers]);
 
   const markerLeft = Math.min(96, Math.max(4, score)) + "%";
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useWallets } from "../WalletsContext";
+import { useAssetReference } from "../useAssetReference";
 import { useToast } from "@/modules/core/ToastContext";
 import { usd } from "@/modules/core/format";
 import { ApiError } from "@/lib/apiClient";
@@ -36,6 +37,7 @@ export function AssetForm({ walletId, walletName, mode, assetId, initial }: Prop
     setErrors((e) => ({ ...e, [key]: undefined }));
   };
 
+  const { reference } = useAssetReference(form.ticker);
   const previewVal = (parseFloat(form.qty) || 0) * (parseFloat(form.avg) || 0);
   const hasErrors = Object.values(errors).some(Boolean);
 
@@ -116,6 +118,14 @@ export function AssetForm({ walletId, walletName, mode, assetId, initial }: Prop
           <div className="text-[13px] text-[var(--color-text-muted-3)]">Estimated position value</div>
           <div className="font-mono text-lg font-semibold text-[var(--color-brand-hover)]">{usd(previewVal)}</div>
         </div>
+
+        {reference && (
+          <div className="flex flex-wrap gap-2 text-xs text-[var(--color-text-muted-2)]">
+            <span className="px-2.5 py-1 rounded-full bg-[var(--color-card-alt)] border border-[var(--color-border)]">Sector: {reference.sector}</span>
+            <span className="px-2.5 py-1 rounded-full bg-[var(--color-card-alt)] border border-[var(--color-border)]">Country: {reference.country}</span>
+            <span className="px-2.5 py-1 rounded-full bg-[var(--color-card-alt)] border border-[var(--color-border)]">Risk: {reference.riskRating}</span>
+          </div>
+        )}
 
         <div className="flex gap-2.5 border-t border-[var(--color-border-3)] pt-4.5">
           <Button onClick={save} disabled={saving}>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/modules/core/ToastContext";
+import { apiFetch } from "@/lib/apiClient";
 import { Card } from "@/modules/core/components/Card";
 import { Alert } from "@/modules/core/components/Alert";
 import { Input } from "@/modules/core/components/Input";
@@ -13,17 +14,31 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i;
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("ana.souza@mywallet.io");
   const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
+  const [devToken, setDevToken] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const { showToast } = useToast();
   const router = useRouter();
 
-  const send = () => {
+  const send = async () => {
     if (!EMAIL_RE.test(email)) {
       setError("Enter a valid email address, e.g. name@domain.com.");
       return;
     }
-    setSent(true);
-    showToast(`Recovery link sent to ${email}.`);
+    setSending(true);
+    try {
+      const { devToken: token } = await apiFetch<{ ok: boolean; devToken: string | null }>("/api/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      });
+      setDevToken(token);
+      setSent(true);
+      showToast(`Recovery link sent to ${email}.`);
+    } catch {
+      showToast("Could not send the recovery link. Please try again.", "err");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -46,7 +61,7 @@ export default function ForgotPasswordPage() {
             </div>
             <Alert tone="warning">Did not receive it? Check the spam folder, or request a new link in 60 seconds.</Alert>
             <div className="flex gap-2.5">
-              <Button onClick={() => router.push("/reset-password")}>Open the link</Button>
+              <Button onClick={() => router.push(devToken ? `/reset-password?token=${devToken}` : "/reset-password")}>Open the link</Button>
               <Button href="/" variant="secondary">
                 Back to sign in
               </Button>
@@ -71,7 +86,9 @@ export default function ForgotPasswordPage() {
               error={error}
             />
             <div className="flex gap-2.5">
-              <Button onClick={send}>Send recovery link</Button>
+              <Button onClick={send} disabled={sending}>
+                {sending ? "Sending…" : "Send recovery link"}
+              </Button>
               <Button href="/" variant="secondary">
                 Cancel
               </Button>

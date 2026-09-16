@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
+import { screenName } from "@/mocks/external/kycWatchlist";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -17,6 +18,13 @@ export async function POST(request: Request) {
 
   const existing = await prisma.user.findFirst({ where: { email: { equals: email } } });
   if (existing) return Response.json({ errors: { email: "An account with this email already exists." } }, { status: 400 });
+
+  // Req. 3 / LGPD & fraud-prevention: screen the applicant against an external
+  // AML/KYC watchlist (AIE, see mocks/external/kycWatchlist.ts) before activating the account.
+  const kyc = screenName(name);
+  if (kyc.matched) {
+    return Response.json({ errors: { name: "We could not verify this account. Contact support." } }, { status: 400 });
+  }
 
   const now = new Date();
   const since = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
