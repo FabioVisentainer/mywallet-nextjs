@@ -24,3 +24,10 @@ export interface ActivityEntry {
   text: string;
   when: string;
 }
+
+export interface ManagedUserInput {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}

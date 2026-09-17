@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
-import type { TxRecord } from "./data";
+import type { TxInput, TxRecord } from "./data";
 
 export function useTransactions() {
   const [transactions, setTransactions] = useState<TxRecord[]>([]);
@@ -16,5 +16,20 @@ export function useTransactions() {
     refetch().finally(() => setLoading(false));
   }, [refetch]);
 
-  return { transactions, loading, refetch };
+  const addTransaction = useCallback(async (input: TxInput) => {
+    const { transaction } = await apiFetch<{ transaction: TxRecord }>("/api/transactions", { method: "POST", body: JSON.stringify(input) });
+    setTransactions((ts) => [transaction, ...ts]);
+  }, []);
+
+  const updateTransaction = useCallback(async (id: string, input: TxInput) => {
+    const { transaction } = await apiFetch<{ transaction: TxRecord }>(`/api/transactions/${id}`, { method: "PATCH", body: JSON.stringify(input) });
+    setTransactions((ts) => ts.map((t) => (t.id === id ? transaction : t)));
+  }, []);
+
+  const deleteTransaction = useCallback(async (id: string) => {
+    await apiFetch(`/api/transactions/${id}`, { method: "DELETE" });
+    setTransactions((ts) => ts.filter((t) => t.id !== id));
+  }, []);
+
+  return { transactions, loading, refetch, addTransaction, updateTransaction, deleteTransaction };
 }

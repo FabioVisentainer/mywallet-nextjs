@@ -14,7 +14,7 @@ import { useToast } from "@/modules/core/ToastContext";
 import { useConfirm } from "@/modules/core/ConfirmContext";
 import { initials } from "@/modules/core/format";
 import type { BadgeTone } from "@/modules/core/components/Badge";
-import type { TeamRole } from "@/modules/institutional/types";
+import type { TeamMemberInput, TeamRole } from "@/modules/institutional/types";
 
 const roleTone: Record<TeamRole, BadgeTone> = {
   Trader: "brand",
@@ -24,10 +24,11 @@ const roleTone: Record<TeamRole, BadgeTone> = {
 
 export default function InstitutionalPage() {
   const { isInstitutional } = useInstitutionalAccess();
-  const { members, loading, addMember, removeMember } = useTeam();
+  const { members, loading, addMember, updateMember, removeMember } = useTeam();
   const { showToast } = useToast();
   const { askConfirm } = useConfirm();
   const [adding, setAdding] = useState(false);
+  const [editTarget, setEditTarget] = useState<{ id: string; initial: TeamMemberInput } | null>(null);
 
   if (!isInstitutional) {
     return (
@@ -74,25 +75,34 @@ export default function InstitutionalPage() {
             </div>
             <Badge tone={roleTone[m.roleInTeam]}>{m.roleInTeam}</Badge>
             <div className="text-xs text-[var(--color-text-muted-2)] w-[90px]">Since {m.since}</div>
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() =>
-                askConfirm({
-                  title: `Remove ${m.name}?`,
-                  body: "They immediately lose delegated access to this desk's wallets and reports.",
-                  detail: `${m.roleInTeam} · ${m.email}`,
-                  cta: "Remove operator",
-                  onConfirm: () => {
-                    removeMember(m.id)
-                      .then(() => showToast(`${m.name} removed from the desk.`))
-                      .catch(() => showToast("Could not remove the operator.", "err"));
-                  },
-                })
-              }
-            >
-              Remove
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setEditTarget({ id: m.id, initial: { name: m.name, email: m.email, roleInTeam: m.roleInTeam } })}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() =>
+                  askConfirm({
+                    title: `Remove ${m.name}?`,
+                    body: "They immediately lose delegated access to this desk's wallets and reports.",
+                    detail: `${m.roleInTeam} · ${m.email}`,
+                    cta: "Remove operator",
+                    onConfirm: () => {
+                      removeMember(m.id)
+                        .then(() => showToast(`${m.name} removed from the desk.`))
+                        .catch(() => showToast("Could not remove the operator.", "err"));
+                    },
+                  })
+                }
+              >
+                Remove
+              </Button>
+            </div>
           </Card>
         ))}
         {members.length === 0 && <div className="py-12 text-center text-[var(--color-text-muted)] text-sm">No operators yet.</div>}
@@ -106,6 +116,19 @@ export default function InstitutionalPage() {
             setAdding(false);
           }}
           onClose={() => setAdding(false)}
+        />
+      )}
+
+      {editTarget && (
+        <AddMemberModal
+          title="Edit operator"
+          initial={editTarget.initial}
+          onSave={async (input) => {
+            await updateMember(editTarget.id, input);
+            showToast("Operator updated.");
+            setEditTarget(null);
+          }}
+          onClose={() => setEditTarget(null)}
         />
       )}
     </AppPage>

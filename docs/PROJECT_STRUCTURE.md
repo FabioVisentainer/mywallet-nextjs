@@ -1,6 +1,69 @@
 # Estrutura do projeto — MyWallet
 
-Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + Prisma/SQLite. Ver também [`DATABASE.md`](./DATABASE.md) para o schema do banco, [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) para o catálogo de componentes visuais (`Button`, `Badge`, `Card`, `Input`, etc.) e [`2 - DESIGN_PATTERNS.md`](2%20-%20DESIGN_PATTERNS.md) para os design patterns (Singleton, Template Method, Strategy) aplicados no `lib/` e em alguns módulos.
+Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + Prisma/SQLite. Ver também [`DATABASE.md`](./DATABASE.md) para o schema do banco, [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) para o catálogo de componentes visuais (`Button`, `Badge`, `Card`, `Input`, etc.), [`2 - DESIGN_PATTERNS.md`](2%20-%20DESIGN_PATTERNS.md) para os design patterns (Singleton, Template Method, Strategy) aplicados no `lib/` e em alguns módulos, e [`3 - CRUD.md`](3%20-%20CRUD.md) para o catálogo de quais rotas têm CRUD completo.
+
+## Arquitetura geral
+
+O projeto segue uma **arquitetura em camadas no estilo MVC, adaptada ao
+modelo client/server do Next.js** — o dado sempre atravessa as mesmas quatro
+camadas, na mesma ordem, tanto pra ler quanto pra escrever:
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│  CLIENTE (browser)                                               │
+│                                                                    │
+│   View                page.tsx (App Router)                       │
+│     ↓ usa                                                          │
+│   Controller/ViewModel  Context ou hook do módulo                  │
+│                         (WalletsContext, useTransactions, ...)      │
+│     ↓ chama                                                          │
+│   Gateway              src/lib/apiClient.ts (fetch tipado)            │
+└──────────────────────────────┬───────────────────────────────────┘
+                                │  HTTP (JSON)
+┌──────────────────────────────▼───────────────────────────────────┐
+│  SERVIDOR (Next.js Route Handlers)                                 │
+│                                                                    │
+│   Controller           src/app/api/**/route.ts (GET/POST/PATCH/DELETE)│
+│     ↓ valida via                                                    │
+│   Service / Validação  ValidatedCreateHandler e afins (src/lib/)      │
+│     ↓ usa                                                            │
+│   Model                Prisma (schema.prisma + PrismaClient)          │
+└──────────────────────────────┬───────────────────────────────────┘
+                                ↓
+                         SQLite (dev.db)
+```
+
+**Onde isso bate com MVC "de livro" e onde não bate:** o **Model** é fiel —
+nenhuma tela ou componente acessa o Prisma ou monta SQL diretamente, só a
+rota de API o faz. A **View** também: `page.tsx` só renderiza, nunca guarda
+estado de negócio por conta própria (ver próxima seção). O que foge do MVC
+clássico é o **Controller**, que aqui existe em duas metades — uma em cada
+lado da rede: do lado do cliente, o Context/hook de cada módulo cumpre o
+papel de Controller/ViewModel (decide *quando* buscar ou mutar dado e expõe
+o resultado pronto pra View); do lado do servidor, a própria função
+exportada da rota (`GET`, `POST`, ...) é o Controller — não existe uma
+classe `Controller` isolada por recurso, o Next.js já usa o arquivo de rota
+como esse ponto de entrada. Essa divisão em camadas é **ortogonal** à
+organização de pastas: a camada descreve *por onde o dado passa*, a
+organização por módulo (próxima seção) descreve *como o código está
+agrupado* — por domínio de negócio, não por tipo de camada (não existe um
+`src/controllers/` ou `src/models/` genérico).
+
+## Estrutura de pastas principais
+
+Visão de alto nível de cada pasta de primeiro nível — a lista completa dos
+módulos de negócio (o que tem dentro de cada um) fica na seção "Ideia
+central" logo abaixo; aqui o objetivo é só entender o papel de cada pasta:
+
+| Pasta | O que tem dentro | Camada (seção anterior) |
+|---|---|---|
+| `src/app/` | Rotas do App Router: cada `page.tsx` é uma tela, cada `api/**/route.ts` é um endpoint | View (páginas) + Controller do servidor (rotas de API) |
+| `src/modules/` | Uma subpasta por domínio de negócio (carteiras, metas, admin, etc.) — dentro de cada uma, o estado (Context ou hook), os tipos e os componentes daquele domínio | Controller/ViewModel do cliente |
+| `src/lib/` | Código transversal reaproveitado por várias rotas/módulos: cliente Prisma (Singleton), gateway de dados externos (Singleton), classes-base de Template Method (`ValidatedCreateHandler`, `FormSubmitTemplate`, `ApiResourceLoader`), hash de senha, cliente fetch tipado da API | Service / infraestrutura compartilhada |
+| `src/mocks/` | `seed/` (dados de demonstração, só o `prisma/seed.ts` importa daqui) e `external/` (simulação de APIs externas — cotações, câmbio, e-mail transacional) | Dado de apoio para desenvolvimento, não é uma camada de arquitetura |
+| `src/generated/prisma/` | Client TypeScript gerado a partir do `schema.prisma` — não editar, não versionar | Model (código gerado) |
+| `prisma/` (fora de `src/`) | `schema.prisma` (definição do Model) + `migrations/` (histórico versionado do schema do banco) | Model (fonte) |
+| `docs/` | Esta documentação | — |
 
 ## Ideia central: módulos separados por domínio
 
@@ -10,24 +73,64 @@ Por quê: para dar de extrair/vender um módulo isolado a um cliente que só pre
 
 ```
 src/
-├── app/                    # só rotas — cada arquivo é fino, importa dos módulos
+├── app/                    # rotas (App Router) — ver seção "O que realmente fica em app/ vs. modules/" logo abaixo
 ├── modules/
-│   ├── core/               # sessão, toast, modal de confirmação, layout base, tema — fundação de todos os módulos
-│   ├── wallets/            # carteiras + ativos
-│   ├── goals/               # metas financeiras
-│   ├── performance/         # gráfico de performance
-│   ├── transactions/        # extrato de transações (somente leitura)
-│   ├── news/                 # portal de notícias + estúdio do analista (ArticleForm)
-│   ├── admin/                # gestão de usuários
-│   ├── plans/                 # planos Standard/Platinum/Black + regras de bloqueio
-│   ├── institutional/          # mesa institucional (equipe + relatório consolidado) — só clientes accountType="Institutional"
-│   └── quiz/                   # teste de perfil de investidor
+│   ├── core/               # sessão, toast, modal de confirmação, layout base, design system — fundação de todos os módulos
+│   ├── wallets/            # carteiras + ativos — CRUD completo
+│   ├── goals/               # metas financeiras — CRUD completo
+│   ├── performance/         # gráfico de performance (só leitura)
+│   ├── transactions/        # extrato de transações — CRUD completo (manual) + importação em lote de swaps
+│   ├── news/                 # portal de notícias + estúdio do analista (ArticleForm) — CRUD completo
+│   ├── admin/                # gestão de usuários — CRUD completo
+│   ├── promotions/            # promoções por tempo determinado nos planos — CRUD completo, exclusivo role admin
+│   ├── plans/                  # planos Standard/Platinum/Black + regras de bloqueio (Strategy)
+│   ├── institutional/           # mesa institucional (equipe + relatório consolidado) — CRUD completo, só clientes accountType="Institutional"
+│   └── quiz/                    # teste de perfil de investidor (histórico, não é CRUD)
 ├── mocks/
 │   ├── seed/                # dados de exemplo — só o prisma/seed.ts importa daqui
-│   └── external/              # simula APIs externas (cotações, câmbio, etc.) — só as rotas /api/market/* importam daqui
+│   └── external/              # simula APIs externas (cotações, câmbio, e-mail transacional, etc.) — só as rotas /api/market/* e as de auth importam daqui
 ├── lib/                      # prisma client singleton, market data gateway (singleton), api resource loader e form-submit (template method), validated create handler, hash de senha, cliente fetch da API — ver DESIGN_PATTERNS.md
 └── generated/prisma/          # código gerado pelo Prisma — não editar, não versionar
 ```
+
+## O que realmente fica em `app/` vs. em `modules/`
+
+A ideia de "`app/` só tem rotas finas" é fácil de ler errado como "todo
+`page.tsx` é uma linha só, importando uma tela pronta de dentro de `modules/`"
+— **não é bem assim na prática**. A maioria dos `page.tsx` deste projeto monta
+a composição visual inteira da tela (grid, cards, tabela, filtros) — só o
+**estado e a mutação de dado** vêm de um Context/hook do módulo:
+
+| `page.tsx` | Linhas | O que vem de `modules/` |
+|---|---|---|
+| `goals/page.tsx` | 137 | `useGoals()` (estado) + `GoalFormModal` (formulário) — o card, a barra de progresso e o layout da lista são escritos ali mesmo |
+| `admin/page.tsx` | 148 | `useAdmin()` + `CreateUserModal` — a tabela, busca e filtro por papel são código da rota |
+| `transactions/page.tsx` | 185 | `useTransactions()` + `TransactionFormModal` + `BrokerImportPanel` — a tabela e os filtros por tipo são código da rota |
+| `promotions/page.tsx` | 136 | `usePromotions()` + `PromotionFormModal` — o cálculo de status (`Scheduled`/`Active`/`Expired`) é código da rota |
+| `dashboard/page.tsx` | 181 | agrega `useWallets`, `useGoals` e `useMarketSeries` de três módulos diferentes — só faz sentido existir na rota, não em nenhum módulo isolado |
+
+Só uma minoria de rotas é de fato "fina" no sentido literal — devolve
+praticamente só um componente de formulário do módulo, sem montar layout
+próprio:
+
+| `page.tsx` | Linhas | Componente do módulo que faz o trabalho |
+|---|---|---|
+| `analyst/new/page.tsx` | 12 | `<ArticleForm mode="new" .../>` |
+| `wallets/[id]/assets/new/page.tsx` | 34 | `<AssetForm mode="new" .../>` |
+| `wallets/[id]/assets/[assetId]/page.tsx` | 41 | `<AssetForm mode="edit" .../>` |
+| `analyst/[id]/page.tsx` | 45 | `<ArticleForm mode="edit" .../>` |
+
+**A fronteira que é de fato garantida** (e vale para as duas categorias
+acima): nenhuma página fala com o Prisma ou faz `fetch` bruto — sempre passa
+pelo hook/Context do módulo, que por sua vez passa por `apiClient.ts` até a
+rota de API (ver "Camadas de estado" mais abaixo); e nenhuma página guarda
+estado de negócio (a lista de metas, o extrato de transações) fora desse
+Context/hook — só estado de UI local mesmo (aba selecionada, texto de busca,
+qual modal está aberto). O que varia de página pra página é só **quanto de
+composição visual** fica na rota vs. delegada a um componente do módulo — e
+isso depende de a tela ser específica daquela rota (a maioria) ou ser
+literalmente "o formulário X, em modo criar ou editar" (as quatro da segunda
+tabela).
 
 ## Anatomia de um módulo
 
@@ -42,7 +145,31 @@ wallets/
     └── WalletFormModal.tsx           # modal de criar/renomear carteira
 ```
 
-Padrão repetido em `goals/`, `news/`, `admin/`, `institutional/` (com pequenas variações — `transactions/` e `performance/` não têm Context porque não têm mutação feita pelo usuário, só um hook de busca `useTransactions`/`useMarketSeries`).
+Padrão repetido em `goals/`, `news/`, `admin/`, `institutional/`, `promotions/`. Nem todo módulo segue a forma à risca — a tabela abaixo mostra o que cada um realmente tem hoje:
+
+| Módulo | Estado (Context ou hook) | `types.ts` | `components/` | Observação |
+|---|---|---|---|---|
+| `core` | `SessionContext`, `ToastContext`, `ConfirmContext` (`CoreProviders` combina os três) | `types.ts` (`Role`, `PlanName`, `AccountType`, ...) | catálogo do design system + layout (`Sidebar`, `Topbar`, `AppPage`, `Modal`, ...) | fundação — todo módulo de feature depende dele |
+| `wallets` | `WalletsContext` — CRUD completo | `types.ts` (`Wallet`, `Asset`, `AssetInput`) | `AssetForm`, `WalletFormModal` | + `useAssetReference.ts`, hook de leitura auxiliar |
+| `goals` | `GoalsContext` — CRUD completo | `types.ts` | `GoalFormModal` | |
+| `performance` | `useMarketSeries` (hook, só leitura) | — | `PerformanceChart` | + `chart.ts` (cálculo de série do gráfico) |
+| `transactions` | `useTransactions` (hook) — CRUD completo | `data.ts` faz esse papel (`TxRecord`, `TxInput`, `TxType`) | `TransactionFormModal`, `BrokerImportPanel` | sem Context porque a mutação é simples o bastante para um hook só |
+| `news` | `NewsContext` — CRUD completo | `types.ts` | `ArticleForm` | + `useAnalystCalls.ts` (hook de leitura, widget de recomendações) |
+| `admin` | `AdminContext` — CRUD completo | `types.ts` | `CreateUserModal` | |
+| `promotions` | `PromotionsContext` — CRUD completo | `types.ts` | `PromotionFormModal` | ver `3 - CRUD.md` para o catálogo completo de CRUDs |
+| `plans` | `usePlanGating()` (`gating.ts`) + `useCurrencyRates` | — | `LockedFeature` | `data.ts` guarda os planos estáticos (Standard/Platinum/Black) |
+| `institutional` | `TeamContext` — CRUD completo | `types.ts` | `AddMemberModal` | + `access.ts` (`useInstitutionalAccess`), `reportExportStrategy.ts` (Strategy) |
+| `quiz` | `QuizContext` | — | — | `data.ts` (perguntas), `profileStrategy.ts` (Strategy) — histórico de tentativas, não CRUD |
+
+Um módulo sem mutação do usuário (`performance`) não precisa de Context — um
+hook de busca simples resolve. `transactions` tem CRUD completo mas fica num
+hook (`useTransactions`) em vez de Context porque a mutação é simples o
+bastante para não justificar o Context; `quiz` não tem CRUD de propósito
+(histórico de tentativas, ver `3 - CRUD.md`) mas ainda assim usa Context
+(`QuizContext`) por conveniência de estado compartilhado entre as etapas do
+teste. Um módulo sem `components/` (`quiz`, `plans`... exceto `LockedFeature`)
+é sinal de que ele não tem formulário/modal próprio, só lê e decide (Strategy)
+ou só expõe estado.
 
 Duas exceções ganharam um arquivo de "regra" isolado do resto do módulo, no padrão Strategy (ver `2 - DESIGN_PATTERNS.md`): `quiz/profileStrategy.ts` (decide qual perfil de investidor o score indica) e `institutional/reportExportStrategy.ts` (decide como serializar o relatório consolidado por formato).
 
@@ -59,6 +186,9 @@ Três mecanismos compostos, cada um resolvido por um hook central (nunca `if` es
 `accountType` é o eixo que resolve o requisito de "nem todo cliente tem a mesma opção": só a conta seed `carla.mendes@mywallet.io` é `Institutional` e enxerga o item "Institutional desk" no menu — para as demais o módulo simplesmente não existe. Igual a `wallets/`, `institutional/` só depende de `core` (mais uma leitura pontual de `useWallets` no relatório consolidado, precedente documentado abaixo com `analyst`/`NewsContext`) — dá pra extrair `core/` + `institutional/` e vender essa mesa isolada a um cliente que só precisa dela.
 
 ## Camadas de estado — de onde vêm os dados
+
+Versão detalhada do diagrama de "Arquitetura geral" (topo deste documento),
+aqui com os hooks reais de cada módulo:
 
 ```
 Página (src/app/.../page.tsx)
@@ -79,8 +209,8 @@ Nenhuma página lê o Prisma diretamente — sempre passa pela rota de API, mesm
 |---|---|---|
 | `/` | `app/page.tsx` | Login (chama `POST /api/auth/login` de verdade) |
 | `/signup` | `app/(auth)/signup/page.tsx` | Cadastro (chama `POST /api/auth/signup`, depois faz login) |
-| `/forgot-password` | `app/(auth)/forgot-password/page.tsx` | Fluxo de fachada (não é real) |
-| `/reset-password` | `app/(auth)/reset-password/page.tsx` | Fluxo de fachada (não é real) |
+| `/forgot-password` | `app/(auth)/forgot-password/page.tsx` | Chama `POST /api/auth/forgot-password` de verdade — grava um `PasswordResetToken` real; só o envio do e-mail é mockado (ver `DATABASE.md`) |
+| `/reset-password` | `app/(auth)/reset-password/page.tsx` | Chama `POST /api/auth/reset-password` de verdade — valida o token e grava a nova senha com hash |
 
 ### Teste de perfil — `src/app/quiz/`
 `quiz/layout.tsx` provê o `QuizProvider` (estado do questionário compartilhado entre as duas telas abaixo).
@@ -108,6 +238,7 @@ Nenhuma página lê o Prisma diretamente — sempre passa pela rota de API, mesm
 | `/analyst/new`, `/analyst/[id]` | `analyst/new/page.tsx`, `analyst/[id]/page.tsx` | news |
 | `/admin` | `admin/page.tsx` | admin |
 | `/admin/[id]` | `admin/[id]/page.tsx` | admin |
+| `/promotions` | `promotions/page.tsx` | promotions — exclusivo role admin |
 | `/plans` | `plans/page.tsx` | plans |
 | `/institutional` | `institutional/page.tsx` | institutional — exclusivo `accountType="Institutional"`, mostra bloqueio para os demais |
 | `/institutional/reports` | `institutional/reports/page.tsx` | institutional — idem, agrega dados de `wallets` |
@@ -118,10 +249,12 @@ CRUD real contra o SQLite:
 - `wallets/route.ts`, `wallets/[id]/route.ts`, `wallets/[id]/assets/route.ts`, `wallets/[id]/assets/[assetId]/route.ts`
 - `goals/route.ts` (o `POST` usa `ValidatedCreateHandler`, ver `2 - DESIGN_PATTERNS.md`), `goals/[id]/route.ts`
 - `articles/route.ts`, `articles/[id]/route.ts`
-- `users/route.ts`, `users/[id]/route.ts`
-- `team/route.ts` (o `POST` também usa `ValidatedCreateHandler`), `team/[id]/route.ts` (CRUD de `TeamMember`, consumido só por `institutional/`)
-- `transactions/route.ts` (só leitura)
-- `auth/login/route.ts`, `auth/signup/route.ts`
+- `users/route.ts` (`GET`/`POST` — o `POST` é criação administrativa, usa `ValidatedCreateHandler`, distinto de `auth/signup`), `users/[id]/route.ts` (`GET`/`PATCH`/`DELETE`)
+- `team/route.ts` (`GET`/`POST`, o `POST` usa `ValidatedCreateHandler`), `team/[id]/route.ts` (`PATCH`/`DELETE`) — CRUD de `TeamMember`, consumido só por `institutional/`
+- `transactions/route.ts` (`GET`/`POST`), `transactions/[id]/route.ts` (`PATCH`/`DELETE`), `transactions/import/route.ts` (importação em lote de swaps da corretora simulada)
+- `promotions/route.ts` (`GET`/`POST`, o `POST` usa `ValidatedCreateHandler`), `promotions/[id]/route.ts` (`PATCH`/`DELETE`) — CRUD de `Promotion`, novo (ver `3 - CRUD.md`)
+- `auth/login/route.ts`, `auth/signup/route.ts`, `auth/forgot-password/route.ts`, `auth/reset-password/route.ts` (recuperação de senha real, ver `DATABASE.md`)
+- `quiz/result/route.ts` (`GET`/`POST` — histórico de tentativas do teste de perfil, não é CRUD)
 
 Dados "de mercado" (mockados, ver `DATABASE.md`), todas passando pelo singleton `MarketDataGateway` (ver `2 - DESIGN_PATTERNS.md`):
 - `market/rates/route.ts`, `market/performance/route.ts`, `market/analyst-calls/route.ts`
@@ -145,8 +278,9 @@ Dados "de mercado" (mockados, ver `DATABASE.md`), todas passando pelo singleton 
 ```bash
 npm install
 npm run db:migrate   # cria/atualiza o schema local
-npm run db:seed       # popula dados de demonstração
-npm run dev            # http://localhost:3000
+npm run db:generate   # regenera o client TS a partir do schema.prisma
+npm run db:seed        # popula dados de demonstração
+npm run dev             # http://localhost:3000
 ```
 
 `npm run build` e `npm run lint` devem passar limpos antes de qualquer entrega.

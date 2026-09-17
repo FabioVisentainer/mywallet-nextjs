@@ -8,6 +8,7 @@ interface TeamContextValue {
   members: TeamMember[];
   loading: boolean;
   addMember: (input: TeamMemberInput) => Promise<void>;
+  updateMember: (id: string, input: TeamMemberInput) => Promise<void>;
   removeMember: (id: string) => Promise<void>;
 }
 
@@ -28,14 +29,19 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     setMembers((ms) => ms.concat([member]));
   }, []);
 
+  const updateMember = useCallback(async (id: string, input: TeamMemberInput) => {
+    const { member } = await apiFetch<{ member: TeamMember }>(`/api/team/${id}`, { method: "PATCH", body: JSON.stringify(input) });
+    setMembers((ms) => ms.map((m) => (m.id === id ? member : m)));
+  }, []);
+
   const removeMember = useCallback(async (id: string) => {
     await apiFetch(`/api/team/${id}`, { method: "DELETE" });
     setMembers((ms) => ms.filter((m) => m.id !== id));
   }, []);
 
   const value = useMemo<TeamContextValue>(
-    () => ({ members, loading, addMember, removeMember }),
-    [members, loading, addMember, removeMember]
+    () => ({ members, loading, addMember, updateMember, removeMember }),
+    [members, loading, addMember, updateMember, removeMember]
   );
 
   return <TeamContext.Provider value={value}>{children}</TeamContext.Provider>;

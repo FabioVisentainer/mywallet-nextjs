@@ -17,3 +17,12 @@ export const typeStyle: Record<TxType, [string, string]> = {
   Swap: ["#F4F0FF", "#6938EF"],
   Deposit: ["#ECFDF3", "#067647"],
 };
+
+export interface TxInput {
+  date: string;
+  type: TxType;
+  asset: string;
+  wallet: string;
+  qty: string;
+  price: string;
+}

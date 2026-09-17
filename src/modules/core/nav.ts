@@ -24,6 +24,7 @@ const navDefs: Record<NonNullable<Role>, NavItem[]> = {
   ],
   admin: [
     { href: "/admin", label: "Users", icon: "☰", matchPrefixes: ["/admin"] },
+    { href: "/promotions", label: "Promotions", icon: "%", matchPrefixes: ["/promotions"] },
     { href: "/news", label: "News portal", icon: "❏", matchPrefixes: ["/news"] },
     { href: "/performance", label: "Market chart", icon: "◪", matchPrefixes: ["/performance"] },
   ],

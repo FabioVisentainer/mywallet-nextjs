@@ -7,6 +7,8 @@ SQLite local via **Prisma 7** (novo gerador `prisma-client`, arquitetura de *dri
 - Seed: [`prisma/seed.ts`](../prisma/seed.ts)
 - Cliente singleton usado pelas rotas: [`src/lib/prisma.ts`](../src/lib/prisma.ts)
 
+Ver também [`3 - CRUD.md`](3%20-%20CRUD.md) para o catálogo de quais tabelas têm CRUD completo (Create/Read/Update/Delete) por rota de API e quais existem no banco mas não são CRUD de propósito (histórico, log, token).
+
 ## Comandos
 
 Rodar sempre a partir de `mywallet-nextjs/`:
@@ -32,11 +34,12 @@ Nem todo dado que a UI mostra vem do banco. Dados que em um app real viriam de *
 
 | Dado | Onde vive | Por quê |
 |---|---|---|
-| Wallets, Assets (qty/avg), Goals, Articles, Users, Transactions | **SQLite** (tabelas abaixo) | Registros de negócio reais, criados/editados pelo usuário |
+| Wallets, Assets (qty/avg), Goals, Articles, Users, Transactions, Team Members, Promotions, tokens de recuperação de senha, resultados do teste de perfil | **SQLite** (tabelas abaixo) | Registros de negócio reais, criados/editados pelo usuário |
 | Preço atual de cada ativo (`price`) | `src/mocks/external/quotes.ts` | Em produção viria de uma API de cotações em tempo real |
 | Câmbio (USD/EUR/GBP/CAD) | `src/mocks/external/rates.ts` | Em produção viria de uma API de câmbio |
 | Série histórica do gráfico de performance + benchmark (Ibovespa) | `src/mocks/external/performance.ts` | Em produção viria de um provedor de dados de mercado |
 | Recomendações de analistas (widget da página de notícias) | `src/mocks/external/analystCalls.ts` | Simula um feed de research de terceiros |
+| E-mail transacional (link de recuperação de senha) | `src/mocks/external/emailProvider.ts` | Em produção viria de um provedor de e-mail transacional (SES, SendGrid, etc.) — a `PasswordResetToken` (dado real, ver abaixo) é o que a aplicação de fato controla |
 
 Essas rotas expõem os mocks "externos" como se fossem uma API de mercado: `GET /api/market/rates`, `GET /api/market/performance`, `GET /api/market/analyst-calls`. O preço (`price`) de cada `Asset` é calculado e mesclado dentro das rotas `/api/wallets*` (ver `getQuote(ticker, avgCost)`), nunca gravado no banco.
 
@@ -109,14 +112,15 @@ Conteúdo publicado pelo analista no portal de notícias.
 | `status` | String | `"Published"` \| `"Draft"` |
 
 ### `Transaction`
-Ledger histórico de operações (somente leitura na UI hoje, sem tela de criação).
+Ledger histórico de operações. CRUD completo pela tela `/transactions` (ver [`3 - CRUD.md`](3%20-%20CRUD.md#33-transaction--só-tinha-leitura--importação-em-lote)) — lançamento manual (`POST`/`PATCH`/`DELETE`) e importação em lote de swaps do feed simulado da corretora (`POST /api/transactions/import`).
 
 | Campo | Tipo | Observação |
 |---|---|---|
 | `id` | String (PK) | |
 | `date`, `asset`, `wallet`, `qty` | String | |
 | `type` | String | `"Buy"` \| `"Sell"` \| `"Swap"` \| `"Deposit"` |
-| `price`, `total` | Float | |
+| `price`, `total` | Float | sinal de `total`: `Buy` negativo, `Sell`/`Deposit` positivo, `Swap` fica em `0` num lançamento manual (ver `3 - CRUD.md`) |
+| `externalRef` | String? | id do registro de origem no feed da corretora externa quando a transação veio de lá (`api/transactions/import`); `null` para lançamentos manuais |
 
 ### `TeamMember`
 Operadores com acesso delegado na mesa institucional (`institutional/`) — exclusivo de contas `accountType="Institutional"`. Tabela plana, sem FK para `User` (mesma simplificação que `Wallet`/`Goal` já usam hoje: um único conjunto de dados de demonstração compartilhado, não multi-tenant de verdade).
@@ -127,6 +131,51 @@ Operadores com acesso delegado na mesa institucional (`institutional/`) — excl
 | `name`, `email` | String | |
 | `roleInTeam` | String | `"Trader"` \| `"Compliance"` \| `"Viewer"` |
 | `since` | String | |
+
+### `PasswordResetToken`
+Recuperação de senha (Req. 3): token único com validade, gerado em
+`POST /api/auth/forgot-password` e consumido (`usedAt` preenchido) em
+`POST /api/auth/reset-password`. Não tem tela própria de CRUD — é
+manipulado só pelas duas rotas acima, nunca listado/editado manualmente.
+
+| Campo | Tipo | Observação |
+|---|---|---|
+| `id` | String (PK) | |
+| `userId` | String (FK → `User.id`, `onDelete: Cascade`) | |
+| `token` | String (único) | valor bruto enviado por e-mail; o e-mail em si é simulado (`src/mocks/external/emailProvider.ts`) |
+| `expiresAt` | String | ISO datetime — token expira 30 minutos após a criação |
+| `usedAt` | String? | preenchido no primeiro uso; um token usado não é aceito de novo |
+| `createdAt` | String | |
+
+### `InvestorProfileResult`
+Resultado do teste de perfil de investidor (Req. 6, `/quiz`). Cada tentativa
+("realizar" ou "refazer o teste") grava uma **linha nova**, preservando o
+histórico — não é um `upsert` sobre um resultado único por usuário.
+
+| Campo | Tipo | Observação |
+|---|---|---|
+| `id` | String (PK) | |
+| `userId` | String (FK → `User.id`, `onDelete: Cascade`) | |
+| `score` | Int | 0–100 |
+| `profileKey` | String | `"Conservative"` \| `"Moderate"` \| `"Aggressive"` — decidido por `quiz/profileStrategy.ts` (Strategy, ver `2 - DESIGN_PATTERNS.md`) |
+| `answers` | String | respostas selecionadas, serializadas em JSON |
+| `completedAt` | String | |
+
+### `Promotion`
+Promoção por tempo determinado sobre um plano de assinatura
+(`Standard`/`Platinum`/`Black`), cadastrada por um atendente/administrador.
+CRUD completo pela tela `/promotions` (exclusiva do papel admin) — detalhe
+completo em [`3 - CRUD.md`](3%20-%20CRUD.md#4-crud-novo--promotion).
+
+| Campo | Tipo | Observação |
+|---|---|---|
+| `id` | String (PK) | |
+| `planName` | String | `"Standard"` \| `"Platinum"` \| `"Black"` — por nome, não FK: não existe tabela `Plan` própria (planos são estáticos em `src/modules/plans/data.ts`), mesma simplificação de `Transaction.wallet` |
+| `title`, `description` | String | |
+| `discountPct` | Float | validado entre 1 e 100 |
+| `startsAt`, `endsAt` | String | vigência da promoção; `endsAt >= startsAt` validado na API |
+| `active` | Boolean (default `true`) | permite desativar manualmente antes do fim da vigência |
+| `createdBy` | String | id do `User` que cadastrou |
 
 ## Senhas e autenticação
 
@@ -154,5 +203,6 @@ Contas criadas pela tela de cadastro (`/signup`) usam a senha escolhida pelo usu
 ## Limitações conhecidas (de propósito, para não inflar o escopo do protótipo)
 
 - **Sessão não persiste em cookie/JWT.** O login é validado de verdade no servidor, mas o estado de "logado" fica só em memória no React (`SessionContext`) — um F5 na página derruba a sessão e volta pro login. Se precisar de sessão persistente entre reloads, isso pediria um próximo passo (cookie httpOnly + JWT, ou algo como NextAuth/Lucia).
-- **"Esqueci minha senha"** (`/forgot-password`, `/reset-password`) continua sendo um fluxo 100% de fachada (não manda e-mail nem altera senha de verdade).
+- **"Esqueci minha senha"** (`/forgot-password`, `/reset-password`) já é real do lado do banco — gera e valida um `PasswordResetToken` de verdade, grava a nova senha com `hashPassword` (ver "Senhas e autenticação" abaixo). O único mock nesse fluxo é o **envio do e-mail** (`src/mocks/external/emailProvider.ts`, simula um provedor tipo SES/SendGrid); por isso a resposta da API devolve o token (`devToken`) direto, só para este protótipo conseguir montar um link funcional sem uma caixa de e-mail real.
 - **Permissões granulares** do admin (toggles de "Publicar notícias", "Moderar", etc.) continuam só no client, não persistidas — o `role` (Investor/Analyst/Administrator) é o único controle de acesso real hoje.
+- **`TeamMember`, `PasswordResetToken`, `InvestorProfileResult` e `Promotion`** dependem de rodar `npm run db:generate` num ambiente com acesso de rede a `binaries.prisma.sh` antes de funcionar — ver [`3 - CRUD.md`](3%20-%20CRUD.md#6-descoberta-e-correção-de-um-desalinhamento-no-schema-do-prisma) para o que aconteceu e o que falta.

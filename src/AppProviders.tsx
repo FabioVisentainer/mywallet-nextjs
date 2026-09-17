@@ -7,6 +7,7 @@ import { GoalsProvider } from "@/modules/goals/GoalsContext";
 import { NewsProvider } from "@/modules/news/NewsContext";
 import { AdminProvider } from "@/modules/admin/AdminContext";
 import { TeamProvider } from "@/modules/institutional/TeamContext";
+import { PromotionsProvider } from "@/modules/promotions/PromotionsContext";
 
 /**
  * Wires every feature module's state provider together for the whole app.
@@ -24,7 +25,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
         <GoalsProvider>
           <NewsProvider>
             <AdminProvider>
-              <TeamProvider>{children}</TeamProvider>
+              <TeamProvider>
+                <PromotionsProvider>{children}</PromotionsProvider>
+              </TeamProvider>
             </AdminProvider>
           </NewsProvider>
         </GoalsProvider>

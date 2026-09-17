@@ -7,6 +7,8 @@ import { Card } from "@/modules/core/components/Card";
 import { Badge } from "@/modules/core/components/Badge";
 import { Button } from "@/modules/core/components/Button";
 import { useAdmin } from "@/modules/admin/AdminContext";
+import { CreateUserModal } from "@/modules/admin/components/CreateUserModal";
+import { useToast } from "@/modules/core/ToastContext";
 import { initials } from "@/modules/core/format";
 import type { BadgeTone } from "@/modules/core/components/Badge";
 import type { UserRole } from "@/modules/admin/types";
@@ -32,9 +34,11 @@ const statusColor: Record<string, string> = {
 };
 
 export default function AdminUsersPage() {
-  const { users, loading } = useAdmin();
+  const { users, loading, addUser } = useAdmin();
+  const { showToast } = useToast();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<(typeof roleFilters)[number]>("All");
+  const [creating, setCreating] = useState(false);
 
   if (loading) {
     return (
@@ -52,6 +56,10 @@ export default function AdminUsersPage() {
   return (
     <AppPage title="User management" subtitle="All accounts, roles and permissions">
       <div className="flex flex-col gap-4 max-w-[1240px]">
+        <div className="flex justify-end">
+          <Button onClick={() => setCreating(true)}>+ New user</Button>
+        </div>
+
         <div className="flex gap-3 items-center flex-wrap">
           <input
             value={search}
@@ -124,6 +132,17 @@ export default function AdminUsersPage() {
           </div>
         </Card>
       </div>
+
+      {creating && (
+        <CreateUserModal
+          onSave={async (input) => {
+            await addUser(input);
+            showToast(`Account created for ${input.name}.`);
+            setCreating(false);
+          }}
+          onClose={() => setCreating(false)}
+        />
+      )}
     </AppPage>
   );
 }

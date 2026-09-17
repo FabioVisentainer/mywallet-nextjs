@@ -9,18 +9,24 @@ import { Button } from "@/modules/core/components/Button";
 import { usePlanGating } from "@/modules/plans/gating";
 import { LockedFeature } from "@/modules/plans/components/LockedFeature";
 import { useToast } from "@/modules/core/ToastContext";
-import { typeStyle, type TxType } from "@/modules/transactions/data";
+import { useConfirm } from "@/modules/core/ConfirmContext";
+import { typeStyle, type TxInput, type TxType } from "@/modules/transactions/data";
 import { useTransactions } from "@/modules/transactions/useTransactions";
 import { BrokerImportPanel } from "@/modules/transactions/components/BrokerImportPanel";
+import { TransactionFormModal } from "@/modules/transactions/components/TransactionFormModal";
 import { usd, posColor } from "@/modules/core/format";
 
 const filters: (TxType | "All")[] = ["All", "Buy", "Sell", "Swap", "Deposit"];
 
+const emptyInput: TxInput = { date: new Date().toISOString().slice(0, 10), type: "Buy", asset: "", wallet: "", qty: "", price: "" };
+
 export default function TransactionsPage() {
   const gating = usePlanGating();
   const { showToast } = useToast();
-  const { transactions, loading, refetch } = useTransactions();
+  const { askConfirm } = useConfirm();
+  const { transactions, loading, refetch, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
+  const [modalTarget, setModalTarget] = useState<{ id?: string; initial: TxInput } | null>(null);
 
   if (gating.transactionsLocked) {
     return (
@@ -44,6 +50,17 @@ export default function TransactionsPage() {
 
   const filtered = transactions.filter((t) => filter === "All" || t.type === filter);
 
+  const handleSave = async (input: TxInput) => {
+    if (modalTarget?.id) {
+      await updateTransaction(modalTarget.id, input);
+      showToast("Transaction updated.");
+    } else {
+      await addTransaction(input);
+      showToast("Transaction added.");
+    }
+    setModalTarget(null);
+  };
+
   return (
     <AppPage title="Transactions & swaps" subtitle="Personal audit trail">
       <div className="flex flex-col gap-4 max-w-[1240px]">
@@ -65,15 +82,20 @@ export default function TransactionsPage() {
               );
             })}
           </div>
-          <Button variant="secondary" size="sm" onClick={() => showToast("CSV export queued — check your email.")}>
-            Export CSV
-          </Button>
+          <div className="flex gap-2.5">
+            <Button variant="secondary" size="sm" onClick={() => showToast("CSV export queued — check your email.")}>
+              Export CSV
+            </Button>
+            <Button size="sm" onClick={() => setModalTarget({ initial: emptyInput })}>
+              + New transaction
+            </Button>
+          </div>
         </div>
 
         <Card padding="p-0" className="overflow-hidden">
           <div
             className="grid gap-3 px-5 py-2.5 bg-[var(--color-card-alt)] border-b border-[var(--color-border)] text-[11px] font-bold text-[var(--color-text-muted)] uppercase tracking-wide"
-            style={{ gridTemplateColumns: "1fr 0.9fr 1.6fr 1.1fr 0.9fr 1fr 1.1fr" }}
+            style={{ gridTemplateColumns: "1fr 0.9fr 1.6fr 1.1fr 0.9fr 1fr 1.1fr 130px" }}
           >
             <div>Date</div>
             <div>Type</div>
@@ -82,6 +104,7 @@ export default function TransactionsPage() {
             <div className="text-right">Qty</div>
             <div className="text-right">Unit price</div>
             <div className="text-right">Total</div>
+            <div />
           </div>
           {filtered.map((t) => {
             const [typeBg, typeFg] = typeStyle[t.type];
@@ -91,7 +114,7 @@ export default function TransactionsPage() {
               <div
                 key={t.id}
                 className="grid gap-3 px-5 py-3.5 border-b border-[var(--color-border-3)] items-center hover:bg-[var(--color-card-alt)]"
-                style={{ gridTemplateColumns: "1fr 0.9fr 1.6fr 1.1fr 0.9fr 1fr 1.1fr" }}
+                style={{ gridTemplateColumns: "1fr 0.9fr 1.6fr 1.1fr 0.9fr 1fr 1.1fr 130px" }}
               >
                 <div className="font-mono text-xs text-[var(--color-text-muted-2)]">{t.date}</div>
                 <div>
@@ -104,6 +127,39 @@ export default function TransactionsPage() {
                 <div className="text-right font-mono text-[13px] font-semibold" style={{ color: totalColor }}>
                   {totalLabel}
                 </div>
+                <div className="flex justify-end gap-1.5">
+                  <Button
+                    variant="secondary"
+                    size="xs"
+                    onClick={() =>
+                      setModalTarget({
+                        id: t.id,
+                        initial: { date: t.date, type: t.type, asset: t.asset, wallet: t.wallet, qty: t.qty === "—" ? "" : t.qty, price: String(t.price) },
+                      })
+                    }
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="xs"
+                    onClick={() =>
+                      askConfirm({
+                        title: "Delete this transaction?",
+                        body: "It is removed from your audit trail permanently. Wallet balances are unaffected.",
+                        detail: `${t.type} · ${t.asset} · ${t.date}`,
+                        cta: "Delete transaction",
+                        onConfirm: () => {
+                          deleteTransaction(t.id)
+                            .then(() => showToast("Transaction deleted."))
+                            .catch(() => showToast("Could not delete the transaction.", "err"));
+                        },
+                      })
+                    }
+                  >
+                    Delete
+                  </Button>
+                </div>
               </div>
             );
           })}
@@ -115,6 +171,15 @@ export default function TransactionsPage() {
           </div>
         </Card>
       </div>
+
+      {modalTarget && (
+        <TransactionFormModal
+          title={modalTarget.id ? "Edit transaction" : "New transaction"}
+          initial={modalTarget.initial}
+          onSave={handleSave}
+          onClose={() => setModalTarget(null)}
+        />
+      )}
     </AppPage>
   );
 }

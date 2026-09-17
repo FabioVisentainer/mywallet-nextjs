@@ -138,3 +138,21 @@ model TeamMember {
   roleInTeam String
   since      String
 }
+
+// Promoção por tempo determinado sobre um plano de assinatura (Standard/Platinum/Black).
+// Cadastrada por um atendente/administrador (Req. novo). planName referencia PlanName por
+// nome (não existe uma tabela Plan própria — os planos são definidos estaticamente em
+// src/modules/plans/data.ts), a mesma simplificação já usada em Transaction.wallet.
+// active permite suspender a promoção manualmente antes do fim da vigência (endsAt);
+// fora isso, se está em vigência é calculado por startsAt/endsAt na camada de apresentação.
+model Promotion {
+  id          String  @id
+  planName    String
+  title       String
+  description String
+  discountPct Float
+  startsAt    String
+  endsAt      String
+  active      Boolean @default(true)
+  createdBy   String
+}

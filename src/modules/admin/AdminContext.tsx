@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { ActivityEntry, ManagedUser, UserPermissions, UserRole } from "./types";
+import type { ActivityEntry, ManagedUser, ManagedUserInput, UserPermissions, UserRole } from "./types";
 import { apiFetch } from "@/lib/apiClient";
 
 function defaultPerms(role: UserRole): UserPermissions {
@@ -20,6 +20,7 @@ interface AdminContextValue {
   getUser: (id: string) => ManagedUser | undefined;
   getActivity: (userId: string) => Promise<ActivityEntry[]>;
   getPermissions: (userId: string) => UserPermissions;
+  addUser: (input: ManagedUserInput) => Promise<void>;
   togglePermission: (userId: string, key: keyof UserPermissions, on: boolean) => void;
   changeRole: (userId: string, role: UserRole) => Promise<void>;
   revokePublishing: (userId: string) => Promise<void>;
@@ -40,6 +41,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getUser = useCallback((id: string) => users.find((u) => u.id === id), [users]);
+
+  const addUser = useCallback(async (input: ManagedUserInput) => {
+    const { user } = await apiFetch<{ user: ManagedUser }>("/api/users", { method: "POST", body: JSON.stringify(input) });
+    setUsers((us) => us.concat([user]));
+  }, []);
 
   const getActivity = useCallback(async (userId: string) => {
     const data = await apiFetch<{ activity: ActivityEntry[] }>(`/api/users/${userId}`);
@@ -85,8 +91,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AdminContextValue>(
-    () => ({ users, loading, getUser, getActivity, getPermissions, togglePermission, changeRole, revokePublishing, deleteUser }),
-    [users, loading, getUser, getActivity, getPermissions, togglePermission, changeRole, revokePublishing, deleteUser]
+    () => ({ users, loading, getUser, getActivity, getPermissions, addUser, togglePermission, changeRole, revokePublishing, deleteUser }),
+    [users, loading, getUser, getActivity, getPermissions, addUser, togglePermission, changeRole, revokePublishing, deleteUser]
   );
 
   return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
