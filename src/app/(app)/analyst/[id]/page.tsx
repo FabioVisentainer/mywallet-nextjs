@@ -2,8 +2,8 @@
 
 import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
 import { ArticleForm } from "@/modules/news/components/ArticleForm";
 import { useNews } from "@/modules/news/NewsContext";
 

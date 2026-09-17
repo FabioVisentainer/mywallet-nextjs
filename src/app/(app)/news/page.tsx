@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { Badge } from "@/modules/core/components/Badge";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { Badge } from "@/design-system/Badge";
 import { useNews } from "@/modules/news/NewsContext";
 import { useAnalystCalls } from "@/modules/news/useAnalystCalls";
 

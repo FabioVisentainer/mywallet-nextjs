@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ApiResourceLoader } from "@/lib/apiResourceLoader";
+import { ApiResourceLoader } from "@/services/apiResourceLoader";
 
 export interface AssetReference {
   ticker: string;

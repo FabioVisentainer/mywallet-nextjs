@@ -190,3 +190,10 @@ validar → 400 se inválido → persistir → responder com a entidade criada.
 Todos os formulários de criação/edição da UI seguem `FormSubmitTemplate`.
 Detalhe de cada exemplo e por que aquele ponto do código pedia o padrão em
 [`2 - DESIGN_PATTERNS.md`](2%20-%20DESIGN_PATTERNS.md).
+
+Por trás de cada rota, a validação e a regra de negócio (o `validate`/`persist`
+de cada `ValidatedCreateHandler`, e a mesma validação reaproveitada pelo
+`PATCH`) moram num Service de servidor (`src/server/services/`), que chama um
+Repository (`src/server/repositories/`) — o único lugar que fala com o Prisma.
+Ver "Arquitetura geral" em [`PROJECT_STRUCTURE.md`](./PROJECT_STRUCTURE.md)
+para o diagrama completo dessa camada.

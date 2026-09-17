@@ -1,4 +1,4 @@
-import { MarketDataGateway } from "@/lib/marketDataGateway";
+import { MarketDataGateway } from "@/server/repositories/marketDataGateway";
 
 // Simulated external asset-classification/reference-data provider, via the MarketDataGateway singleton.
 export async function GET(request: Request) {

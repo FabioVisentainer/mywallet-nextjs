@@ -2,18 +2,18 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { Badge } from "@/modules/core/components/Badge";
-import { Alert } from "@/modules/core/components/Alert";
-import { Select } from "@/modules/core/components/Select";
-import { Button } from "@/modules/core/components/Button";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { Badge } from "@/design-system/Badge";
+import { Alert } from "@/design-system/Alert";
+import { Select } from "@/design-system/Select";
+import { Button } from "@/design-system/Button";
 import { useAdmin } from "@/modules/admin/AdminContext";
 import { useToast } from "@/modules/core/ToastContext";
 import { useConfirm } from "@/modules/core/ConfirmContext";
 import { initials } from "@/modules/core/format";
-import type { BadgeTone } from "@/modules/core/components/Badge";
+import type { BadgeTone } from "@/design-system/Badge";
 import type { ActivityEntry, UserPermissions, UserRole } from "@/modules/admin/types";
 
 const roleStyle: Record<UserRole, [string, string]> = {

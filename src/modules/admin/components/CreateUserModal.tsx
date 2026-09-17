@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Modal } from "@/modules/core/components/Modal";
-import { Input } from "@/modules/core/components/Input";
-import { Select } from "@/modules/core/components/Select";
-import { Button } from "@/modules/core/components/Button";
-import { ApiError } from "@/lib/apiClient";
-import { FormSubmitTemplate } from "@/lib/formSubmitTemplate";
+import { Modal } from "@/modules/core/layout/Modal";
+import { Input } from "@/design-system/Input";
+import { Select } from "@/design-system/Select";
+import { Button } from "@/design-system/Button";
+import { ApiError } from "@/services/apiClient";
+import { FormSubmitTemplate } from "@/services/formSubmitTemplate";
 import type { ManagedUserInput, UserRole } from "../types";
 
 interface Props {

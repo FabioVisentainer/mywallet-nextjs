@@ -2,11 +2,11 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { StatCard } from "@/modules/core/components/StatCard";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { Button } from "@/modules/core/components/Button";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { StatCard } from "@/design-system/StatCard";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { Button } from "@/design-system/Button";
 import { useWallets } from "@/modules/wallets/WalletsContext";
 import { WalletFormModal } from "@/modules/wallets/components/WalletFormModal";
 import { useToast } from "@/modules/core/ToastContext";

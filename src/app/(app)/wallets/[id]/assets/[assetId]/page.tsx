@@ -2,8 +2,8 @@
 
 import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
 import { AssetForm } from "@/modules/wallets/components/AssetForm";
 import { useWallets } from "@/modules/wallets/WalletsContext";
 

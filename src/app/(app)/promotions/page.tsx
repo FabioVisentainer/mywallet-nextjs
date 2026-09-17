@@ -1,17 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { Badge } from "@/modules/core/components/Badge";
-import { Button } from "@/modules/core/components/Button";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { Badge } from "@/design-system/Badge";
+import { Button } from "@/design-system/Button";
 import { useSession } from "@/modules/core/SessionContext";
 import { usePromotions } from "@/modules/promotions/PromotionsContext";
 import { PromotionFormModal } from "@/modules/promotions/components/PromotionFormModal";
 import { useToast } from "@/modules/core/ToastContext";
 import { useConfirm } from "@/modules/core/ConfirmContext";
-import type { BadgeTone } from "@/modules/core/components/Badge";
+import type { BadgeTone } from "@/design-system/Badge";
 import type { Promotion, PromotionInput } from "@/modules/promotions/types";
 
 const emptyInput: PromotionInput = { planName: "Platinum", title: "", description: "", discountPct: "", startsAt: "", endsAt: "" };

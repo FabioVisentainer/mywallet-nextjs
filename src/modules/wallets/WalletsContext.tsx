@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Asset, AssetInput, Wallet } from "./types";
-import { apiFetch } from "@/lib/apiClient";
+import { walletsService } from "./walletsService";
 
 interface WalletsContextValue {
   wallets: Wallet[];
@@ -29,7 +29,8 @@ export function WalletsProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch<{ wallets: Wallet[]; assets: Record<string, Asset[]> }>("/api/wallets")
+    walletsService
+      .list()
       .then((data) => {
         setWallets(data.wallets);
         setAssets(data.assets);
@@ -53,19 +54,19 @@ export function WalletsProvider({ children }: { children: ReactNode }) {
   );
 
   const addWallet = useCallback(async (name: string) => {
-    const { wallet } = await apiFetch<{ wallet: Wallet }>("/api/wallets", { method: "POST", body: JSON.stringify({ name }) });
+    const { wallet } = await walletsService.create(name);
     setWallets((ws) => ws.concat([wallet]));
     setAssets((as) => ({ ...as, [wallet.id]: [] }));
     return wallet;
   }, []);
 
   const renameWallet = useCallback(async (id: string, name: string) => {
-    const { wallet } = await apiFetch<{ wallet: Wallet }>(`/api/wallets/${id}`, { method: "PATCH", body: JSON.stringify({ name }) });
+    const { wallet } = await walletsService.rename(id, name);
     setWallets((ws) => ws.map((w) => (w.id === id ? wallet : w)));
   }, []);
 
   const deleteWallet = useCallback(async (id: string) => {
-    await apiFetch(`/api/wallets/${id}`, { method: "DELETE" });
+    await walletsService.remove(id);
     setWallets((ws) => ws.filter((w) => w.id !== id));
     setAssets((as) => {
       const next = { ...as };
@@ -75,20 +76,17 @@ export function WalletsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addAsset = useCallback(async (walletId: string, input: AssetInput) => {
-    const { asset } = await apiFetch<{ asset: Asset }>(`/api/wallets/${walletId}/assets`, { method: "POST", body: JSON.stringify(input) });
+    const { asset } = await walletsService.addAsset(walletId, input);
     setAssets((as) => ({ ...as, [walletId]: (as[walletId] || []).concat([asset]) }));
   }, []);
 
   const updateAsset = useCallback(async (walletId: string, assetId: string, input: AssetInput) => {
-    const { asset } = await apiFetch<{ asset: Asset }>(`/api/wallets/${walletId}/assets/${assetId}`, {
-      method: "PATCH",
-      body: JSON.stringify(input),
-    });
+    const { asset } = await walletsService.updateAsset(walletId, assetId, input);
     setAssets((as) => ({ ...as, [walletId]: (as[walletId] || []).map((a) => (a.id === assetId ? asset : a)) }));
   }, []);
 
   const deleteAsset = useCallback(async (walletId: string, assetId: string) => {
-    await apiFetch(`/api/wallets/${walletId}/assets/${assetId}`, { method: "DELETE" });
+    await walletsService.removeAsset(walletId, assetId);
     setAssets((as) => ({ ...as, [walletId]: (as[walletId] || []).filter((a) => a.id !== assetId) }));
   }, []);
 

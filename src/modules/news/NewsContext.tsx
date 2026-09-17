@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Article, ArticleInput } from "./types";
-import { apiFetch } from "@/lib/apiClient";
+import { articlesService } from "./articlesService";
 
 interface NewsContextValue {
   articles: Article[];
@@ -21,7 +21,8 @@ export function NewsProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch<{ articles: Article[] }>("/api/articles")
+    articlesService
+      .list()
       .then((data) => setArticles(data.articles))
       .finally(() => setLoading(false));
   }, []);
@@ -29,39 +30,27 @@ export function NewsProvider({ children }: { children: ReactNode }) {
   const getArticle = useCallback((id: string) => articles.find((a) => a.id === id), [articles]);
 
   const createArticle = useCallback(async (input: ArticleInput) => {
-    const { article } = await apiFetch<{ article: Article }>("/api/articles", {
-      method: "POST",
-      body: JSON.stringify({ ...input, status: "Published" }),
-    });
+    const { article } = await articlesService.create(input, "Published");
     setArticles((arts) => arts.concat([article]));
   }, []);
 
   const updateArticle = useCallback(async (id: string, input: ArticleInput) => {
-    const { article } = await apiFetch<{ article: Article }>(`/api/articles/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify({ ...input, status: "Published" }),
-    });
+    const { article } = await articlesService.update(id, input, "Published");
     setArticles((arts) => arts.map((a) => (a.id === id ? article : a)));
   }, []);
 
   const saveDraft = useCallback(async (id: string | undefined, input: ArticleInput) => {
     if (id) {
-      const { article } = await apiFetch<{ article: Article }>(`/api/articles/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ ...input, status: "Draft" }),
-      });
+      const { article } = await articlesService.update(id, input, "Draft");
       setArticles((arts) => arts.map((a) => (a.id === id ? article : a)));
     } else {
-      const { article } = await apiFetch<{ article: Article }>("/api/articles", {
-        method: "POST",
-        body: JSON.stringify({ ...input, status: "Draft" }),
-      });
+      const { article } = await articlesService.create(input, "Draft");
       setArticles((arts) => arts.concat([article]));
     }
   }, []);
 
   const deleteArticle = useCallback(async (id: string) => {
-    await apiFetch(`/api/articles/${id}`, { method: "DELETE" });
+    await articlesService.remove(id);
     setArticles((arts) => arts.filter((a) => a.id !== id));
   }, []);
 

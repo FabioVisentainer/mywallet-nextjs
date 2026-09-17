@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { apiFetch } from "@/lib/apiClient";
+import { transactionsService } from "./transactionsService";
 import type { TxInput, TxRecord } from "./data";
 
 export function useTransactions() {
@@ -9,7 +9,7 @@ export function useTransactions() {
   const [loading, setLoading] = useState(true);
 
   const refetch = useCallback(() => {
-    return apiFetch<{ transactions: TxRecord[] }>("/api/transactions").then((data) => setTransactions(data.transactions));
+    return transactionsService.list().then((data) => setTransactions(data.transactions));
   }, []);
 
   useEffect(() => {
@@ -17,17 +17,17 @@ export function useTransactions() {
   }, [refetch]);
 
   const addTransaction = useCallback(async (input: TxInput) => {
-    const { transaction } = await apiFetch<{ transaction: TxRecord }>("/api/transactions", { method: "POST", body: JSON.stringify(input) });
+    const { transaction } = await transactionsService.create(input);
     setTransactions((ts) => [transaction, ...ts]);
   }, []);
 
   const updateTransaction = useCallback(async (id: string, input: TxInput) => {
-    const { transaction } = await apiFetch<{ transaction: TxRecord }>(`/api/transactions/${id}`, { method: "PATCH", body: JSON.stringify(input) });
+    const { transaction } = await transactionsService.update(id, input);
     setTransactions((ts) => ts.map((t) => (t.id === id ? transaction : t)));
   }, []);
 
   const deleteTransaction = useCallback(async (id: string) => {
-    await apiFetch(`/api/transactions/${id}`, { method: "DELETE" });
+    await transactionsService.remove(id);
     setTransactions((ts) => ts.filter((t) => t.id !== id));
   }, []);
 

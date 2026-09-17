@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/modules/core/SessionContext";
 import { useToast } from "@/modules/core/ToastContext";
-import { Alert } from "@/modules/core/components/Alert";
-import { Input } from "@/modules/core/components/Input";
-import { Button } from "@/modules/core/components/Button";
-import { ApiError } from "@/lib/apiClient";
+import { Alert } from "@/design-system/Alert";
+import { Input } from "@/design-system/Input";
+import { Button } from "@/design-system/Button";
+import { ApiError } from "@/services/apiClient";
 import type { Role } from "@/modules/core/types";
 
 const roleCards = [

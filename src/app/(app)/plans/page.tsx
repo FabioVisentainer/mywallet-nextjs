@@ -1,9 +1,9 @@
 "use client";
 
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Card } from "@/modules/core/components/Card";
-import { Badge } from "@/modules/core/components/Badge";
-import { Button } from "@/modules/core/components/Button";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Card } from "@/design-system/Card";
+import { Badge } from "@/design-system/Badge";
+import { Button } from "@/design-system/Button";
 import { useSession } from "@/modules/core/SessionContext";
 import { useToast } from "@/modules/core/ToastContext";
 import { planDefs, planMatrixDefs } from "@/modules/plans/data";

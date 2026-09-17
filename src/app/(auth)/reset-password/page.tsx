@@ -3,11 +3,11 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/modules/core/ToastContext";
-import { apiFetch, ApiError } from "@/lib/apiClient";
-import { Card } from "@/modules/core/components/Card";
-import { Alert } from "@/modules/core/components/Alert";
-import { Input } from "@/modules/core/components/Input";
-import { Button } from "@/modules/core/components/Button";
+import { apiFetch, ApiError } from "@/services/apiClient";
+import { Card } from "@/design-system/Card";
+import { Alert } from "@/design-system/Alert";
+import { Input } from "@/design-system/Input";
+import { Button } from "@/design-system/Button";
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState("");

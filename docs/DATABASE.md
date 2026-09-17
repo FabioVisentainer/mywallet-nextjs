@@ -5,7 +5,7 @@ SQLite local via **Prisma 7** (novo gerador `prisma-client`, arquitetura de *dri
 - Schema: [`prisma/schema.prisma`](../prisma/schema.prisma)
 - Migrações: [`prisma/migrations/`](../prisma/migrations/)
 - Seed: [`prisma/seed.ts`](../prisma/seed.ts)
-- Cliente singleton usado pelas rotas: [`src/lib/prisma.ts`](../src/lib/prisma.ts)
+- Cliente singleton usado pelas rotas: [`src/server/prisma.ts`](../src/server/prisma.ts)
 
 Ver também [`3 - CRUD.md`](3%20-%20CRUD.md) para o catálogo de quais tabelas têm CRUD completo (Create/Read/Update/Delete) por rota de API e quais existem no banco mas não são CRUD de propósito (histórico, log, token).
 
@@ -179,7 +179,7 @@ completo em [`3 - CRUD.md`](3%20-%20CRUD.md#4-crud-novo--promotion).
 
 ## Senhas e autenticação
 
-Hash com **scrypt** (`node:crypto`, sem dependência externa), implementado em [`src/lib/password.ts`](../src/lib/password.ts):
+Hash com **scrypt** (`node:crypto`, sem dependência externa), implementado em [`src/server/password.ts`](../src/server/password.ts):
 
 - `hashPassword(senha)` → gera salt aleatório de 16 bytes + deriva a chave, retorna `"saltHex:hashHex"`.
 - `verifyPassword(senha, hashArmazenado)` → deriva a chave com o mesmo salt e compara com `timingSafeEqual` (evita *timing attacks*).

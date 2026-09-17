@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { StatCard } from "@/modules/core/components/StatCard";
-import { Alert } from "@/modules/core/components/Alert";
-import { Button } from "@/modules/core/components/Button";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { StatCard } from "@/design-system/StatCard";
+import { Alert } from "@/design-system/Alert";
+import { Button } from "@/design-system/Button";
 import { usePlanGating } from "@/modules/plans/gating";
 import { useToast } from "@/modules/core/ToastContext";
 import { buildChart } from "@/modules/performance/chart";

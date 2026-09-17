@@ -8,7 +8,7 @@ import { users, activity } from "../src/mocks/seed/users";
 import { transactions } from "../src/mocks/seed/transactions";
 import { teamMembers } from "../src/mocks/seed/team";
 import { promotions } from "../src/mocks/seed/promotions";
-import { hashPassword } from "../src/lib/password";
+import { hashPassword } from "../src/server/password";
 
 const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL || "file:./dev.db" });
 const prisma = new PrismaClient({ adapter });

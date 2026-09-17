@@ -4,13 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useNews } from "../NewsContext";
 import { useToast } from "@/modules/core/ToastContext";
-import { ApiError } from "@/lib/apiClient";
-import { Card } from "@/modules/core/components/Card";
-import { Alert } from "@/modules/core/components/Alert";
-import { Input } from "@/modules/core/components/Input";
-import { Select } from "@/modules/core/components/Select";
-import { Textarea } from "@/modules/core/components/Textarea";
-import { Button } from "@/modules/core/components/Button";
+import { ApiError } from "@/services/apiClient";
+import { Card } from "@/design-system/Card";
+import { Alert } from "@/design-system/Alert";
+import { Input } from "@/design-system/Input";
+import { Select } from "@/design-system/Select";
+import { Textarea } from "@/design-system/Textarea";
+import { Button } from "@/design-system/Button";
 import type { ArticleInput } from "../types";
 
 interface Props {

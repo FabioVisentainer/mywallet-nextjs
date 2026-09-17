@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch, ApiError } from "@/lib/apiClient";
+import { apiFetch, ApiError } from "@/services/apiClient";
 import { useWallets } from "@/modules/wallets/WalletsContext";
 import { useToast } from "@/modules/core/ToastContext";
-import { Card } from "@/modules/core/components/Card";
-import { Select } from "@/modules/core/components/Select";
-import { Button } from "@/modules/core/components/Button";
+import { Card } from "@/design-system/Card";
+import { Select } from "@/design-system/Select";
+import { Button } from "@/design-system/Button";
 
 interface BrokerSwap {
   id: string;

@@ -1,7 +1,7 @@
 "use client";
 
-import { Card } from "@/modules/core/components/Card";
-import { Button } from "@/modules/core/components/Button";
+import { Card } from "@/design-system/Card";
+import { Button } from "@/design-system/Button";
 
 interface Props {
   title: string;

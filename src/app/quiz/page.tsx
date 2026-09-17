@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useToast } from "@/modules/core/ToastContext";
-import { ProgressBar } from "@/modules/core/components/ProgressBar";
-import { Button } from "@/modules/core/components/Button";
+import { ProgressBar } from "@/design-system/ProgressBar";
+import { Button } from "@/design-system/Button";
 import { useQuiz } from "@/modules/quiz/QuizContext";
 import { quiz } from "@/modules/quiz/data";
 

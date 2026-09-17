@@ -1,40 +1,25 @@
-import { prisma } from "@/lib/prisma";
-import { MarketDataGateway } from "@/lib/marketDataGateway";
-import type { Asset } from "@/modules/wallets/types";
+import { walletService } from "@/server/services/walletService";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string; assetId: string }> }) {
   const { assetId } = await params;
   const body = await request.json();
-  const ticker = String(body.ticker || "").trim();
-  const name = String(body.name || "").trim();
-  const qty = parseFloat(body.qty);
-  const avg = parseFloat(body.avg);
+  const input = {
+    ticker: String(body.ticker || "").trim(),
+    name: String(body.name || "").trim(),
+    qty: parseFloat(body.qty),
+    avg: parseFloat(body.avg),
+    type: body.type as string | undefined,
+  };
 
-  const errors: Record<string, string> = {};
-  if (!ticker) errors.ticker = "Ticker is required.";
-  if (!name) errors.name = "Asset name is required.";
-  if (!(qty > 0)) errors.qty = "Enter a quantity greater than zero.";
-  if (!(avg > 0)) errors.avg = "Enter a valid average price.";
+  const errors = walletService.validateAsset(input);
   if (Object.keys(errors).length) return Response.json({ errors }, { status: 400 });
 
-  const updated = await prisma.asset.update({
-    where: { id: assetId },
-    data: { ticker: ticker.toUpperCase(), name, type: body.type || "Stock", qty, avg },
-  });
-  const asset: Asset = {
-    id: updated.id,
-    ticker: updated.ticker,
-    name: updated.name,
-    type: updated.type as Asset["type"],
-    qty: updated.qty,
-    avg: updated.avg,
-    price: MarketDataGateway.getInstance().getQuote(updated.ticker, updated.avg),
-  };
+  const asset = await walletService.updateAsset(assetId, input);
   return Response.json({ asset });
 }
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string; assetId: string }> }) {
   const { assetId } = await params;
-  await prisma.asset.delete({ where: { id: assetId } });
+  await walletService.removeAsset(assetId);
   return Response.json({ ok: true });
 }

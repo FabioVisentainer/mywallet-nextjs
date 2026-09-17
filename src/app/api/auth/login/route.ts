@@ -1,5 +1,4 @@
-import { prisma } from "@/lib/prisma";
-import { verifyPassword } from "@/lib/password";
+import { authService } from "@/server/services/authService";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
@@ -10,22 +9,12 @@ export async function POST(request: Request) {
     return Response.json({ error: "Enter your email and password." }, { status: 400 });
   }
 
-  const user = await prisma.user.findFirst({ where: { email: { equals: email } } });
-
-  // Same generic error whether the account doesn't exist or the password is wrong,
-  // and verifyPassword always runs (even with a dummy hash) so failed lookups and
-  // failed password checks take about the same time — avoids leaking which case it was.
-  const DUMMY_HASH = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000:0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-  const ok = verifyPassword(password, user?.passwordHash || DUMMY_HASH);
-
-  if (!user || !ok) {
+  const result = await authService.login(email, password);
+  if ("error" in result) {
+    if (result.error === "suspended") {
+      return Response.json({ error: "This account has been suspended. Contact an administrator." }, { status: 403 });
+    }
     return Response.json({ error: "Invalid email or password." }, { status: 401 });
   }
-  if (user.status === "Suspended") {
-    return Response.json({ error: "This account has been suspended. Contact an administrator." }, { status: 403 });
-  }
-
-  return Response.json({
-    user: { id: user.id, name: user.name, email: user.email, role: user.role, accountType: user.accountType },
-  });
+  return Response.json({ user: result.user });
 }

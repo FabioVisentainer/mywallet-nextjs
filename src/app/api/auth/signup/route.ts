@@ -1,8 +1,4 @@
-import { prisma } from "@/lib/prisma";
-import { hashPassword } from "@/lib/password";
-import { screenName } from "@/mocks/external/kycWatchlist";
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+import { authService } from "@/server/services/authService";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
@@ -10,40 +6,10 @@ export async function POST(request: Request) {
   const email = String(body.email || "").trim().toLowerCase();
   const password = String(body.password || "");
 
-  const errors: Record<string, string> = {};
-  if (!name) errors.name = "Enter your full name.";
-  if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(email)) errors.email = "Enter a valid email address, e.g. name@domain.com.";
-  if (password.length < 8 || !/\d/.test(password)) errors.password = "Use at least 8 characters including one number.";
+  const errors = authService.validateSignup(name, email, password);
   if (Object.keys(errors).length) return Response.json({ errors }, { status: 400 });
 
-  const existing = await prisma.user.findFirst({ where: { email: { equals: email } } });
-  if (existing) return Response.json({ errors: { email: "An account with this email already exists." } }, { status: 400 });
-
-  // Req. 3 / LGPD & fraud-prevention: screen the applicant against an external
-  // AML/KYC watchlist (AIE, see mocks/external/kycWatchlist.ts) before activating the account.
-  const kyc = screenName(name);
-  if (kyc.matched) {
-    return Response.json({ errors: { name: "We could not verify this account. Contact support." } }, { status: 400 });
-  }
-
-  const now = new Date();
-  const since = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
-  const lastAccess = now.toISOString().slice(0, 10);
-
-  const user = await prisma.user.create({
-    data: {
-      id: "u" + Date.now(),
-      name,
-      email,
-      passwordHash: hashPassword(password),
-      role: "Investor",
-      status: "Active",
-      perms: "Wallets, goals, market data",
-      since,
-      lastAccess,
-      activity: { create: [{ text: "Account created", when: `${lastAccess} ${now.toTimeString().slice(0, 5)}` }] },
-    },
-  });
-
-  return Response.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+  const result = await authService.signup(name, email, password);
+  if ("errors" in result) return Response.json({ errors: result.errors }, { status: 400 });
+  return Response.json({ user: result.user });
 }

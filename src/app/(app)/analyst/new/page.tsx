@@ -1,6 +1,6 @@
 "use client";
 
-import { AppPage } from "@/modules/core/components/AppPage";
+import { AppPage } from "@/modules/core/layout/AppPage";
 import { ArticleForm } from "@/modules/news/components/ArticleForm";
 
 export default function NewArticlePage() {

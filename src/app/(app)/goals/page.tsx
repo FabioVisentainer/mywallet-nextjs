@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { Badge } from "@/modules/core/components/Badge";
-import { Button } from "@/modules/core/components/Button";
-import { ProgressBar } from "@/modules/core/components/ProgressBar";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { Badge } from "@/design-system/Badge";
+import { Button } from "@/design-system/Button";
+import { ProgressBar } from "@/design-system/ProgressBar";
 import { useGoals } from "@/modules/goals/GoalsContext";
 import { GoalFormModal } from "@/modules/goals/components/GoalFormModal";
 import { usePlanGating } from "@/modules/plans/gating";
@@ -14,7 +14,7 @@ import { LockedFeature } from "@/modules/plans/components/LockedFeature";
 import { useToast } from "@/modules/core/ToastContext";
 import { useConfirm } from "@/modules/core/ConfirmContext";
 import { usd } from "@/modules/core/format";
-import type { BadgeTone } from "@/modules/core/components/Badge";
+import type { BadgeTone } from "@/design-system/Badge";
 import type { GoalInput } from "@/modules/goals/types";
 
 export default function GoalsPage() {

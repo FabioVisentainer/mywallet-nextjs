@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { TeamMember, TeamMemberInput } from "./types";
-import { apiFetch } from "@/lib/apiClient";
+import { teamService } from "./teamService";
 
 interface TeamContextValue {
   members: TeamMember[];
@@ -19,23 +19,24 @@ export function TeamProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch<{ members: TeamMember[] }>("/api/team")
+    teamService
+      .list()
       .then((data) => setMembers(data.members))
       .finally(() => setLoading(false));
   }, []);
 
   const addMember = useCallback(async (input: TeamMemberInput) => {
-    const { member } = await apiFetch<{ member: TeamMember }>("/api/team", { method: "POST", body: JSON.stringify(input) });
+    const { member } = await teamService.create(input);
     setMembers((ms) => ms.concat([member]));
   }, []);
 
   const updateMember = useCallback(async (id: string, input: TeamMemberInput) => {
-    const { member } = await apiFetch<{ member: TeamMember }>(`/api/team/${id}`, { method: "PATCH", body: JSON.stringify(input) });
+    const { member } = await teamService.update(id, input);
     setMembers((ms) => ms.map((m) => (m.id === id ? member : m)));
   }, []);
 
   const removeMember = useCallback(async (id: string) => {
-    await apiFetch(`/api/team/${id}`, { method: "DELETE" });
+    await teamService.remove(id);
     setMembers((ms) => ms.filter((m) => m.id !== id));
   }, []);
 

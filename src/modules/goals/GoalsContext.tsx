@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Goal, GoalInput } from "./types";
-import { apiFetch } from "@/lib/apiClient";
+import { goalsService } from "./goalsService";
 
 interface GoalsContextValue {
   goals: Goal[];
@@ -20,7 +20,8 @@ export function GoalsProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch<{ goals: Goal[] }>("/api/goals")
+    goalsService
+      .list()
       .then((data) => setGoals(data.goals))
       .finally(() => setLoading(false));
   }, []);
@@ -28,17 +29,17 @@ export function GoalsProvider({ children }: { children: ReactNode }) {
   const getGoal = useCallback((id: string) => goals.find((g) => g.id === id), [goals]);
 
   const addGoal = useCallback(async (input: GoalInput) => {
-    const { goal } = await apiFetch<{ goal: Goal }>("/api/goals", { method: "POST", body: JSON.stringify(input) });
+    const { goal } = await goalsService.create(input);
     setGoals((gs) => gs.concat([goal]));
   }, []);
 
   const updateGoal = useCallback(async (id: string, input: GoalInput) => {
-    const { goal } = await apiFetch<{ goal: Goal }>(`/api/goals/${id}`, { method: "PATCH", body: JSON.stringify(input) });
+    const { goal } = await goalsService.update(id, input);
     setGoals((gs) => gs.map((g) => (g.id === id ? goal : g)));
   }, []);
 
   const deleteGoal = useCallback(async (id: string) => {
-    await apiFetch(`/api/goals/${id}`, { method: "DELETE" });
+    await goalsService.remove(id);
     setGoals((gs) => gs.filter((g) => g.id !== id));
   }, []);
 

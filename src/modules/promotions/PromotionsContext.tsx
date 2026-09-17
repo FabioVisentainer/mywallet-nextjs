@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Promotion, PromotionInput } from "./types";
-import { apiFetch } from "@/lib/apiClient";
+import { promotionsService } from "./promotionsService";
 
 interface PromotionsContextValue {
   promotions: Promotion[];
@@ -20,21 +20,19 @@ export function PromotionsProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch<{ promotions: Promotion[] }>("/api/promotions")
+    promotionsService
+      .list()
       .then((data) => setPromotions(data.promotions))
       .finally(() => setLoading(false));
   }, []);
 
   const addPromotion = useCallback(async (input: PromotionInput, createdBy: string) => {
-    const { promotion } = await apiFetch<{ promotion: Promotion }>("/api/promotions", {
-      method: "POST",
-      body: JSON.stringify({ ...input, createdBy }),
-    });
+    const { promotion } = await promotionsService.create(input, createdBy);
     setPromotions((ps) => [promotion, ...ps]);
   }, []);
 
   const updatePromotion = useCallback(async (id: string, input: PromotionInput) => {
-    const { promotion } = await apiFetch<{ promotion: Promotion }>(`/api/promotions/${id}`, { method: "PATCH", body: JSON.stringify(input) });
+    const { promotion } = await promotionsService.update(id, input);
     setPromotions((ps) => ps.map((p) => (p.id === id ? promotion : p)));
   }, []);
 
@@ -42,17 +40,14 @@ export function PromotionsProvider({ children }: { children: ReactNode }) {
     async (id: string, active: boolean) => {
       const current = promotions.find((p) => p.id === id);
       if (!current) return;
-      const { promotion } = await apiFetch<{ promotion: Promotion }>(`/api/promotions/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          planName: current.planName,
-          title: current.title,
-          description: current.description,
-          discountPct: current.discountPct,
-          startsAt: current.startsAt,
-          endsAt: current.endsAt,
-          active,
-        }),
+      const { promotion } = await promotionsService.update(id, {
+        planName: current.planName,
+        title: current.title,
+        description: current.description,
+        discountPct: current.discountPct,
+        startsAt: current.startsAt,
+        endsAt: current.endsAt,
+        active,
       });
       setPromotions((ps) => ps.map((p) => (p.id === id ? promotion : p)));
     },
@@ -60,7 +55,7 @@ export function PromotionsProvider({ children }: { children: ReactNode }) {
   );
 
   const deletePromotion = useCallback(async (id: string) => {
-    await apiFetch(`/api/promotions/${id}`, { method: "DELETE" });
+    await promotionsService.remove(id);
     setPromotions((ps) => ps.filter((p) => p.id !== id));
   }, []);
 

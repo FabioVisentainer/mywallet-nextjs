@@ -14,7 +14,7 @@ diferente** dos outros exemplos do mesmo padrão — não é a mesma solução c
 não deveria (ou não pode, por custo/estado) ser recriado à toa, e dar um ponto único
 de acesso a ela.
 
-### Exemplo 1 de 2 — `src/lib/prisma.ts` — `PrismaSingleton`
+### Exemplo 1 de 2 — `src/server/prisma.ts` — `PrismaSingleton`
 - **Onde:** cliente do banco de dados (Prisma), usado por praticamente todas as rotas
   de API (`wallets`, `goals`, `transactions`, `users`, `team`, `articles`...).
 - **Por quê:** cada `PrismaClient` abre seu próprio pool de conexões com o SQLite.
@@ -25,7 +25,7 @@ de acesso a ela.
 - **O que mudou:** comportamento idêntico ao original; `export const prisma` continua
   funcionando para todos os arquivos que já o importavam.
 
-### Exemplo 2 de 2 — `src/lib/marketDataGateway.ts` — `MarketDataGateway` (novo)
+### Exemplo 2 de 2 — `src/server/repositories/marketDataGateway.ts` — `MarketDataGateway` (novo)
 - **Onde:** acesso aos 4 provedores externos simulados (cotações, câmbio, histórico
   de performance, recomendações de analistas), usados por 6 rotas de API diferentes.
 - **Por quê:** cada rota importava um mock diferente diretamente. Quando esses mocks
@@ -41,14 +41,14 @@ fixa**, se repete em mais de um lugar, mudando só alguns passos — em vez de c
 algoritmo inteiro, ele é escrito uma vez numa classe-base, e cada subclasse
 implementa só o que varia.
 
-### Exemplo 1 de 3 — `src/lib/apiResourceLoader.ts` — leitura de dados externos (client-side)
+### Exemplo 1 de 3 — `src/services/apiResourceLoader.ts` — leitura de dados externos (client-side)
 - **Algoritmo fixo:** buscar o endpoint → extrair o dado útil da resposta.
 - **Subclasses:** `CurrencyRatesLoader` (`useCurrencyRates.ts`), `MarketSeriesLoader`
   (`useMarketSeries.ts`), `AnalystCallsLoader` (`useAnalystCalls.ts`).
 - **Por quê:** os três hooks tinham o mesmo `useEffect` (fetch → `setState` →
   `setLoading(false)`), mudando só a URL e o formato da resposta.
 
-### Exemplo 2 de 3 — `src/lib/validatedCreateHandler.ts` — criação validada (server-side)
+### Exemplo 2 de 3 — `src/server/controllers/validatedCreateHandler.ts` — criação validada (server-side)
 - **Algoritmo fixo:** ler o corpo da requisição → validar campos → se inválido,
   responder 400 → persistir no banco → responder com a entidade criada.
 - **Subclasses:** `CreateGoalHandler` (`api/goals/route.ts`), `CreateTeamMemberHandler`
@@ -57,8 +57,14 @@ implementa só o que varia.
   campo, 400 se houver algum, senão criar via Prisma e devolver a entidade. Domínio
   diferente do exemplo 1: aqui o passo fixo é "validar antes de gravar", não "ler
   dados de fora".
+- **Depois da reorganização em Controller/Service/Repository** (ver
+  `PROJECT_STRUCTURE.md`): `validate()` e `persist()` de cada subclasse passaram a
+  chamar o Service do recurso (`goalService.validate`/`.create`,
+  `teamMemberService.validate`/`.create`, ...) em vez de montar o objeto de erros e
+  chamar o Prisma ali mesmo — a sequência `parse → validate → persist → respond` do
+  método-modelo não mudou em nada.
 
-### Exemplo 3 de 3 — `src/lib/formSubmitTemplate.ts` — envio de formulário (client-side)
+### Exemplo 3 de 3 — `src/services/formSubmitTemplate.ts` — envio de formulário (client-side)
 - **Algoritmo fixo:** validar (passo opcional) → marcar "salvando" → chamar a API →
   se der erro, traduzir para algo exibível → desmarcar "salvando".
 - **Subclasses:** `GoalFormSubmit` (`GoalFormModal.tsx`, com validação por campo),
@@ -116,11 +122,11 @@ todas atrás da mesma interface.
 
 | Padrão | Exemplo | Onde | Domínio |
 |---|---|---|---|
-| Singleton 1/2 | `PrismaSingleton` | `src/lib/prisma.ts` | conexão única de banco |
-| Singleton 2/2 | `MarketDataGateway` | `src/lib/marketDataGateway.ts` (6 rotas) | provedores externos |
-| Template Method 1/3 | `ApiResourceLoader` | hooks de `plans`, `performance`, `news` | leitura de dados externos |
-| Template Method 2/3 | `ValidatedCreateHandler` | `api/goals`, `api/team` | criação validada no servidor |
-| Template Method 3/3 | `FormSubmitTemplate` | `GoalFormModal`, `WalletFormModal` | envio de formulário |
+| Singleton 1/2 | `PrismaSingleton` | `src/server/prisma.ts` | conexão única de banco |
+| Singleton 2/2 | `MarketDataGateway` | `src/server/repositories/marketDataGateway.ts` (6 rotas) | provedores externos |
+| Template Method 1/3 | `ApiResourceLoader` | `src/services/apiResourceLoader.ts`, usado por hooks de `plans`, `performance`, `news` | leitura de dados externos |
+| Template Method 2/3 | `ValidatedCreateHandler` | `src/server/controllers/validatedCreateHandler.ts`, usado por `api/goals`, `api/team` (entre outros) | criação validada no servidor |
+| Template Method 3/3 | `FormSubmitTemplate` | `src/services/formSubmitTemplate.ts`, usado por `GoalFormModal`, `WalletFormModal` | envio de formulário |
 | Strategy 1/3 | `PlanPolicy` | `src/modules/plans/gating.ts` | o que o plano libera |
 | Strategy 2/3 | `InvestorProfileStrategy` | `src/modules/quiz/profileStrategy.ts` | classificação do score do quiz |
 | Strategy 3/3 | `ReportExportStrategy` | `src/modules/institutional/reportExportStrategy.ts` | formato de exportação |

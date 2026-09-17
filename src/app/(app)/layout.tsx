@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import { Sidebar } from "@/modules/core/components/Sidebar";
-import { Toast } from "@/modules/core/components/Toast";
-import { ConfirmModal } from "@/modules/core/components/ConfirmModal";
-import { RequireSession } from "@/modules/core/components/RequireSession";
+import { Sidebar } from "@/modules/core/layout/Sidebar";
+import { Toast } from "@/modules/core/layout/Toast";
+import { ConfirmModal } from "@/modules/core/layout/ConfirmModal";
+import { RequireSession } from "@/modules/core/layout/RequireSession";
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   return (

@@ -1,11 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { ValidatedCreateHandler } from "@/lib/validatedCreateHandler";
-
-interface GoalCreateInput {
-  name: string;
-  target: number;
-  due: string;
-}
+import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
+import { goalService, type GoalCreateInput } from "@/server/services/goalService";
 
 /** TEMPLATE METHOD — passos variáveis para criar uma meta financeira (ver ValidatedCreateHandler). */
 class CreateGoalHandler extends ValidatedCreateHandler<GoalCreateInput, unknown> {
@@ -18,15 +12,11 @@ class CreateGoalHandler extends ValidatedCreateHandler<GoalCreateInput, unknown>
   }
 
   protected validate(input: GoalCreateInput) {
-    const errors: Record<string, string> = {};
-    if (!input.name) errors.name = "Name the goal.";
-    if (!(input.target > 0)) errors.target = "Enter a target amount.";
-    if (!input.due) errors.due = "Set a deadline.";
-    return errors;
+    return goalService.validate(input);
   }
 
-  protected async persist(input: GoalCreateInput) {
-    return prisma.goal.create({ data: { id: "g" + Date.now(), name: input.name, target: input.target, current: 0, due: input.due } });
+  protected persist(input: GoalCreateInput) {
+    return goalService.create(input);
   }
 
   protected entityKey() {
@@ -35,7 +25,7 @@ class CreateGoalHandler extends ValidatedCreateHandler<GoalCreateInput, unknown>
 }
 
 export async function GET() {
-  const goals = await prisma.goal.findMany({ orderBy: { id: "asc" } });
+  const goals = await goalService.list();
   return Response.json({ goals });
 }
 

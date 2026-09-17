@@ -1,6 +1,6 @@
 # Design system — MyWallet
 
-Todos os componentes visuais reutilizáveis vivem em `src/modules/core/components/`. Fazem parte do módulo `core` (ver [`PROJECT_STRUCTURE.md`](./PROJECT_STRUCTURE.md)) — qualquer módulo de feature pode importar daqui, mas o `core` não depende de nenhum módulo de feature.
+Todos os componentes visuais reutilizáveis vivem em `src/design-system/`, separado do módulo `core` (que guarda o shell do app — Sidebar, Topbar, Modal — ver [`PROJECT_STRUCTURE.md`](./PROJECT_STRUCTURE.md)) — qualquer módulo de feature pode importar daqui, e o design system não depende de nenhum módulo de feature.
 
 Antes deste componentizado, cada tela reimplementava do zero os mesmos botões, badges, cards e campos de formulário com classes Tailwind inline — cada uma com uma variação ligeiramente diferente de altura, cor ou borda. Este documento é o catálogo do que existe agora e quando usar cada peça.
 
@@ -21,7 +21,7 @@ Tipografia: **Manrope** (`--font-manrope`, texto geral) e **Azeret Mono** (`--fo
 ## Componentes
 
 ### `Button`
-`src/modules/core/components/Button.tsx`
+`src/design-system/Button.tsx`
 
 O botão universal. Renderiza `<button>` normalmente, ou vira um `next/link` estilizado igual quando você passa `href` (para CTAs de navegação) — assim uma tela nunca precisa escolher entre "botão" e "link estilizado de botão".
 
@@ -41,7 +41,7 @@ O botão universal. Renderiza `<button>` normalmente, ou vira um `next/link` est
 Todo o resto (`onClick`, `disabled`, `type`, `style`...) são as props nativas de `<button>` quando `href` não é passado.
 
 ### `Badge`
-`src/modules/core/components/Badge.tsx`
+`src/design-system/Badge.tsx`
 
 Pílula pequena para status, papéis e categorias.
 
@@ -54,7 +54,7 @@ Pílula pequena para status, papéis e categorias.
 `tone`: `brand` \| `success` \| `danger` \| `warning` \| `purple` \| `neutral` (padrão) \| `dark`. Quando as cores não se encaixam em nenhum tone (ex.: cor por-linha vinda de dados, como o rating de uma recomendação), passe `style` diretamente — ele sobrescreve o `tone`.
 
 ### `Card`
-`src/modules/core/components/Card.tsx`
+`src/design-system/Card.tsx`
 
 O contêiner branco com borda arredondada usado em quase toda tela — cards de estatística, linhas de lista, painéis de formulário.
 
@@ -64,12 +64,12 @@ O contêiner branco com borda arredondada usado em quase toda tela — cards de 
 ```
 
 ### `StatCard`
-`src/modules/core/components/StatCard.tsx`
+`src/design-system/StatCard.tsx`
 
 Especialização de `Card` para o padrão "label + valor grande + variação": `<StatCard label="Market value" value={usd(x)} color={posColor(x)} />`.
 
 ### `Alert`
-`src/modules/core/components/Alert.tsx`
+`src/design-system/Alert.tsx`
 
 Banner de ícone + mensagem — erro de validação de formulário, aviso de plano bloqueado.
 
@@ -82,7 +82,7 @@ Banner de ícone + mensagem — erro de validação de formulário, aviso de pla
 `tone`: `danger` (padrão) \| `warning` \| `brand` \| `success`. `icon` aceita um SVG customizado (o padrão é um "!" circular). Banners com layout muito específico (ex.: o aviso de limite de carteiras, com ícone quadrado de 38px) continuam com markup próprio — nem todo banner precisa forçar o `Alert`.
 
 ### `Input`, `Select`, `Textarea`, `Checkbox`
-`src/modules/core/components/{Input,Select,Textarea,Checkbox}.tsx`, construídos sobre `FieldShell.tsx`
+`src/design-system/{Input,Select,Textarea,Checkbox}.tsx`, construídos sobre `FieldShell.tsx`
 
 Campos de formulário com label, texto de erro e borda vermelha consistentes. Antes desses componentes, cada formulário reimplementava as mesmas funções `bc()`/`bg()` para decidir a cor da borda com base em erro — eram 6 cópias quase idênticas espalhadas pelo app.
 
@@ -100,7 +100,7 @@ Props comuns a `Input`/`Select`/`Textarea`: `label`, `required` (mostra `*` verm
 `Input` também aceita `invalid` (boolean): deixa a borda vermelha **sem** mostrar texto de erro embaixo — útil quando um `Alert` já explica o erro uma vez para o formulário inteiro (ex.: a tela de login, onde e-mail e senha ficam vermelhos mas a mensagem "Invalid email or password." aparece uma vez só, acima).
 
 ### `ProgressBar`
-`src/modules/core/components/ProgressBar.tsx`
+`src/design-system/ProgressBar.tsx`
 
 Barra de progresso — usada em metas financeiras, no teste de perfil e na alocação sugerida.
 

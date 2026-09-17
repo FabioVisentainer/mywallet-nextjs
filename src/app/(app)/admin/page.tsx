@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { Badge } from "@/modules/core/components/Badge";
-import { Button } from "@/modules/core/components/Button";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { Badge } from "@/design-system/Badge";
+import { Button } from "@/design-system/Button";
 import { useAdmin } from "@/modules/admin/AdminContext";
 import { CreateUserModal } from "@/modules/admin/components/CreateUserModal";
 import { useToast } from "@/modules/core/ToastContext";
 import { initials } from "@/modules/core/format";
-import type { BadgeTone } from "@/modules/core/components/Badge";
+import type { BadgeTone } from "@/design-system/Badge";
 import type { UserRole } from "@/modules/admin/types";
 
 const roleFilters: (UserRole | "All")[] = ["All", "Investor", "Analyst", "Administrator"];

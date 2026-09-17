@@ -1,16 +1,8 @@
-import { prisma } from "@/lib/prisma";
-import { ValidatedCreateHandler } from "@/lib/validatedCreateHandler";
+import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
+import { quizService, type ProfileResultInput } from "@/server/services/quizService";
 
-interface ProfileResultInput {
-  userId: string;
-  score: number;
-  profileKey: string;
-  answers: Record<number, number>;
-}
-
-// Req. 6 — Teste de Perfil de Investidor. Every completed attempt ("realizar"
-// ou "refazer") is stored as a new row, keeping history instead of overwriting
-// the previous result.
+// Req. 6 — Teste de Perfil de Investidor. Cada tentativa concluída ("realizar"
+// ou "refazer") vira um novo registro — histórico, não é CRUD (ver 3 - CRUD.md).
 class SaveProfileResultHandler extends ValidatedCreateHandler<ProfileResultInput, unknown> {
   protected parse(body: Record<string, unknown>): ProfileResultInput {
     return {
@@ -22,24 +14,11 @@ class SaveProfileResultHandler extends ValidatedCreateHandler<ProfileResultInput
   }
 
   protected validate(input: ProfileResultInput) {
-    const errors: Record<string, string> = {};
-    if (!input.userId) errors.userId = "Missing user.";
-    if (!(input.score >= 0 && input.score <= 100)) errors.score = "Invalid score.";
-    if (!["Conservative", "Moderate", "Aggressive"].includes(input.profileKey)) errors.profileKey = "Invalid profile.";
-    return errors;
+    return quizService.validate(input);
   }
 
-  protected async persist(input: ProfileResultInput) {
-    return prisma.investorProfileResult.create({
-      data: {
-        id: "ipr" + Date.now(),
-        userId: input.userId,
-        score: Math.round(input.score),
-        profileKey: input.profileKey,
-        answers: JSON.stringify(input.answers),
-        completedAt: new Date().toISOString(),
-      },
-    });
+  protected persist(input: ProfileResultInput) {
+    return quizService.create(input);
   }
 
   protected entityKey() {
@@ -49,8 +28,7 @@ class SaveProfileResultHandler extends ValidatedCreateHandler<ProfileResultInput
 
 export async function GET(request: Request) {
   const userId = new URL(request.url).searchParams.get("userId") || "";
-  if (!userId) return Response.json({ result: null });
-  const result = await prisma.investorProfileResult.findFirst({ where: { userId }, orderBy: { completedAt: "desc" } });
+  const result = await quizService.findLatestForUser(userId);
   return Response.json({ result });
 }
 

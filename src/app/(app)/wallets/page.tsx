@@ -3,10 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { Button } from "@/modules/core/components/Button";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { Button } from "@/design-system/Button";
 import { useWallets } from "@/modules/wallets/WalletsContext";
 import { WalletFormModal } from "@/modules/wallets/components/WalletFormModal";
 import { usePlanGating } from "@/modules/plans/gating";

@@ -6,12 +6,12 @@ import { useWallets } from "../WalletsContext";
 import { useAssetReference } from "../useAssetReference";
 import { useToast } from "@/modules/core/ToastContext";
 import { usd } from "@/modules/core/format";
-import { ApiError } from "@/lib/apiClient";
-import { Card } from "@/modules/core/components/Card";
-import { Alert } from "@/modules/core/components/Alert";
-import { Input } from "@/modules/core/components/Input";
-import { Select } from "@/modules/core/components/Select";
-import { Button } from "@/modules/core/components/Button";
+import { ApiError } from "@/services/apiClient";
+import { Card } from "@/design-system/Card";
+import { Alert } from "@/design-system/Alert";
+import { Input } from "@/design-system/Input";
+import { Select } from "@/design-system/Select";
+import { Button } from "@/design-system/Button";
 import type { AssetInput, AssetType } from "../types";
 
 interface Props {

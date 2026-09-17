@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ApiResourceLoader } from "@/lib/apiResourceLoader";
+import { ApiResourceLoader } from "@/services/apiResourceLoader";
 import type { analystCalls as AnalystCallsType } from "@/mocks/external/analystCalls";
 
 type AnalystCall = (typeof AnalystCallsType)[number];

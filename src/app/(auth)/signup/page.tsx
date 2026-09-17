@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/modules/core/ToastContext";
 import { useSession } from "@/modules/core/SessionContext";
-import { apiFetch, ApiError } from "@/lib/apiClient";
-import { Card } from "@/modules/core/components/Card";
-import { Alert } from "@/modules/core/components/Alert";
-import { Input } from "@/modules/core/components/Input";
-import { Checkbox } from "@/modules/core/components/Checkbox";
-import { Button } from "@/modules/core/components/Button";
+import { apiFetch, ApiError } from "@/services/apiClient";
+import { Card } from "@/design-system/Card";
+import { Alert } from "@/design-system/Alert";
+import { Input } from "@/design-system/Input";
+import { Checkbox } from "@/design-system/Checkbox";
+import { Button } from "@/design-system/Button";
 
 interface SignupForm {
   name: string;

@@ -4,12 +4,12 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuiz } from "@/modules/quiz/QuizContext";
 import { useSession } from "@/modules/core/SessionContext";
-import { apiFetch } from "@/lib/apiClient";
+import { apiFetch } from "@/services/apiClient";
 import { profiles } from "@/modules/quiz/data";
-import { Card } from "@/modules/core/components/Card";
-import { Badge } from "@/modules/core/components/Badge";
-import { ProgressBar } from "@/modules/core/components/ProgressBar";
-import { Button } from "@/modules/core/components/Button";
+import { Card } from "@/design-system/Card";
+import { Badge } from "@/design-system/Badge";
+import { ProgressBar } from "@/design-system/ProgressBar";
+import { Button } from "@/design-system/Button";
 
 const scaleOrder: (keyof typeof profiles)[] = ["Conservative", "Moderate", "Aggressive"];
 

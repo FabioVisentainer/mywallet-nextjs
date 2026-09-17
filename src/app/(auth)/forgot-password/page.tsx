@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/modules/core/ToastContext";
-import { apiFetch } from "@/lib/apiClient";
-import { Card } from "@/modules/core/components/Card";
-import { Alert } from "@/modules/core/components/Alert";
-import { Input } from "@/modules/core/components/Input";
-import { Button } from "@/modules/core/components/Button";
+import { apiFetch } from "@/services/apiClient";
+import { Card } from "@/design-system/Card";
+import { Alert } from "@/design-system/Alert";
+import { Input } from "@/design-system/Input";
+import { Button } from "@/design-system/Button";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i;
 

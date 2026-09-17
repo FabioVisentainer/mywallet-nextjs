@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { ActivityEntry, ManagedUser, ManagedUserInput, UserPermissions, UserRole } from "./types";
-import { apiFetch } from "@/lib/apiClient";
+import { usersService } from "./usersService";
 
 function defaultPerms(role: UserRole): UserPermissions {
   return {
@@ -35,7 +35,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [perms, setPerms] = useState<Record<string, UserPermissions>>({});
 
   useEffect(() => {
-    apiFetch<{ users: ManagedUser[] }>("/api/users")
+    usersService
+      .list()
       .then((data) => setUsers(data.users))
       .finally(() => setLoading(false));
   }, []);
@@ -43,12 +44,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const getUser = useCallback((id: string) => users.find((u) => u.id === id), [users]);
 
   const addUser = useCallback(async (input: ManagedUserInput) => {
-    const { user } = await apiFetch<{ user: ManagedUser }>("/api/users", { method: "POST", body: JSON.stringify(input) });
+    const { user } = await usersService.create(input);
     setUsers((us) => us.concat([user]));
   }, []);
 
   const getActivity = useCallback(async (userId: string) => {
-    const data = await apiFetch<{ activity: ActivityEntry[] }>(`/api/users/${userId}`);
+    const data = await usersService.getActivity(userId);
     return data.activity;
   }, []);
 
@@ -72,21 +73,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   );
 
   const changeRole = useCallback(async (userId: string, role: UserRole) => {
-    const { user } = await apiFetch<{ user: ManagedUser }>(`/api/users/${userId}`, { method: "PATCH", body: JSON.stringify({ role }) });
+    const { user } = await usersService.update(userId, { role });
     setUsers((us) => us.map((u) => (u.id === userId ? user : u)));
   }, []);
 
   const revokePublishing = useCallback(async (userId: string) => {
-    const { user } = await apiFetch<{ user: ManagedUser }>(`/api/users/${userId}`, {
-      method: "PATCH",
-      body: JSON.stringify({ role: "Investor", perms: "Wallets, goals, market data" }),
-    });
+    const { user } = await usersService.update(userId, { role: "Investor", perms: "Wallets, goals, market data" });
     setUsers((us) => us.map((u) => (u.id === userId ? user : u)));
     setPerms((p) => ({ ...p, [userId]: { ...(p[userId] || defaultPerms("Analyst")), publish: false } }));
   }, []);
 
   const deleteUser = useCallback(async (userId: string) => {
-    await apiFetch(`/api/users/${userId}`, { method: "DELETE" });
+    await usersService.remove(userId);
     setUsers((us) => us.filter((u) => u.id !== userId));
   }, []);
 

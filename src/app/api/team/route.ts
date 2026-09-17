@@ -1,15 +1,9 @@
-import { prisma } from "@/lib/prisma";
-import { ValidatedCreateHandler } from "@/lib/validatedCreateHandler";
-
-interface TeamMemberCreateInput {
-  name: string;
-  email: string;
-  roleInTeam: string;
-}
+import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
+import { teamMemberService, type TeamMemberInput } from "@/server/services/teamMemberService";
 
 /** TEMPLATE METHOD — passos variáveis para criar um operador do time (ver ValidatedCreateHandler). */
-class CreateTeamMemberHandler extends ValidatedCreateHandler<TeamMemberCreateInput, unknown> {
-  protected parse(body: Record<string, unknown>): TeamMemberCreateInput {
+class CreateTeamMemberHandler extends ValidatedCreateHandler<TeamMemberInput, unknown> {
+  protected parse(body: Record<string, unknown>): TeamMemberInput {
     return {
       name: String(body.name || "").trim(),
       email: String(body.email || "").trim(),
@@ -17,18 +11,12 @@ class CreateTeamMemberHandler extends ValidatedCreateHandler<TeamMemberCreateInp
     };
   }
 
-  protected validate(input: TeamMemberCreateInput) {
-    const errors: Record<string, string> = {};
-    if (!input.name) errors.name = "Name the operator.";
-    if (!input.email.includes("@")) errors.email = "Enter a valid email.";
-    if (!["Trader", "Compliance", "Viewer"].includes(input.roleInTeam)) errors.roleInTeam = "Pick a role.";
-    return errors;
+  protected validate(input: TeamMemberInput) {
+    return teamMemberService.validate(input);
   }
 
-  protected async persist(input: TeamMemberCreateInput) {
-    return prisma.teamMember.create({
-      data: { id: "tm" + Date.now(), name: input.name, email: input.email, roleInTeam: input.roleInTeam, since: new Date().toISOString().slice(0, 10) },
-    });
+  protected persist(input: TeamMemberInput) {
+    return teamMemberService.create(input);
   }
 
   protected entityKey() {
@@ -37,7 +25,7 @@ class CreateTeamMemberHandler extends ValidatedCreateHandler<TeamMemberCreateInp
 }
 
 export async function GET() {
-  const members = await prisma.teamMember.findMany({ orderBy: { id: "asc" } });
+  const members = await teamMemberService.list();
   return Response.json({ members });
 }
 

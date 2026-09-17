@@ -1,11 +1,11 @@
 "use client";
 
-import { AppPage } from "@/modules/core/components/AppPage";
-import { Loading } from "@/modules/core/components/Loading";
-import { Card } from "@/modules/core/components/Card";
-import { StatCard } from "@/modules/core/components/StatCard";
-import { Button } from "@/modules/core/components/Button";
-import { Alert } from "@/modules/core/components/Alert";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@/design-system/Card";
+import { StatCard } from "@/design-system/StatCard";
+import { Button } from "@/design-system/Button";
+import { Alert } from "@/design-system/Alert";
 import { useWallets } from "@/modules/wallets/WalletsContext";
 import { useInstitutionalAccess } from "@/modules/institutional/access";
 import { useToast } from "@/modules/core/ToastContext";

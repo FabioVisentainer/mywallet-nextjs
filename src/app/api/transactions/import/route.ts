@@ -1,10 +1,7 @@
-import { prisma } from "@/lib/prisma";
-import { MarketDataGateway } from "@/lib/marketDataGateway";
+import { transactionService } from "@/server/services/transactionService";
 
-// Imports one swap reported by the external broker feed (AIE, see
-// src/mocks/external/brokerFeed.ts) into the app's own Transaction ledger
-// (ALI). Req. 16: histórico de swaps de criptomoedas realizados em
-// corretoras externas, para auditoria pessoal do investidor.
+// Importa um swap reportado pelo feed simulado da corretora externa (AIE, ver
+// src/mocks/external/brokerFeed.ts) pro extrato próprio do app (ALI). Req. 16.
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const swapId = String(body.swapId || "");
@@ -14,28 +11,12 @@ export async function POST(request: Request) {
     return Response.json({ error: "Pick a wallet to import this swap into." }, { status: 400 });
   }
 
-  const already = await prisma.transaction.findFirst({ where: { externalRef: swapId } });
-  if (already) return Response.json({ error: "This swap has already been imported." }, { status: 400 });
-
-  const swap = MarketDataGateway.getInstance().getBrokerSwapById(swapId);
-  if (!swap) return Response.json({ error: "This swap is no longer available from the exchange feed." }, { status: 404 });
-
-  const price = MarketDataGateway.getInstance().getQuote(swap.toTicker, 0);
-  const total = swap.toQty * price;
-
-  const transaction = await prisma.transaction.create({
-    data: {
-      id: "tx" + Date.now(),
-      date: swap.executedAt,
-      type: "Swap",
-      asset: `${swap.fromTicker} → ${swap.toTicker}`,
-      wallet: walletName,
-      qty: `${swap.fromQty} → ${swap.toQty}`,
-      price,
-      total,
-      externalRef: swap.id,
-    },
-  });
-
-  return Response.json({ transaction });
+  const result = await transactionService.importSwap(swapId, walletName);
+  if ("error" in result) {
+    if (result.error === "not_found") {
+      return Response.json({ error: "This swap is no longer available from the exchange feed." }, { status: 404 });
+    }
+    return Response.json({ error: result.error }, { status: 400 });
+  }
+  return Response.json({ transaction: result.transaction });
 }

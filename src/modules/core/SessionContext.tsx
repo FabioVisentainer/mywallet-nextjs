@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { apiFetch } from "@/lib/apiClient";
+import { apiFetch } from "@/services/apiClient";
 import { initials as computeInitials } from "./format";
 import type { AccountType, PlanName, Role } from "./types";
 
