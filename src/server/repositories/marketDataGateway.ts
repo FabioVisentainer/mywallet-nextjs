@@ -4,6 +4,8 @@ import { months, series, benchSeries } from "@/mocks/external/performance";
 import { analystCalls } from "@/mocks/external/analystCalls";
 import { getAssetReference, type AssetReference } from "@/mocks/external/assetReference";
 import { getPendingBrokerSwaps, getBrokerSwapById, type BrokerSwap } from "@/mocks/external/brokerFeed";
+import { getUpcomingActions, type CorporateAction } from "@/mocks/external/corporateActions";
+import { economicEvents, type EconomicEvent } from "@/mocks/external/economicCalendar";
 
 export interface MarketSeriesData {
   months: string[];
@@ -64,5 +66,13 @@ export class MarketDataGateway {
 
   getBrokerSwapById(id: string): BrokerSwap | undefined {
     return getBrokerSwapById(id);
+  }
+
+  getUpcomingActions(tickers: string[]): CorporateAction[] {
+    return getUpcomingActions(tickers);
+  }
+
+  getEconomicCalendar(): EconomicEvent[] {
+    return economicEvents;
   }
 }

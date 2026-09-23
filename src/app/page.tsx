@@ -15,6 +15,7 @@ const roleCards = [
   { initials: "AS", name: "Ana Souza", desc: "Investor · 3 wallets", email: "ana.souza@mywallet.io" },
   { initials: "RP", name: "Rafael Prado", desc: "Analyst · publishes news", email: "rafael.prado@mywallet.io" },
   { initials: "ML", name: "Marcos Lima", desc: "Administrator · full access", email: "marcos.lima@mywallet.io" },
+  { initials: "CM", name: "Carla Mendes", desc: "Institutional · manages the desk", email: "carla.mendes@mywallet.io" },
 ];
 
 const DEMO_PASSWORD = "demo1234";

@@ -14,7 +14,14 @@ import { useCurrencyRates } from "@/modules/plans/useCurrencyRates";
 import { usd, cur, pctStr, posColor } from "@/modules/core/format";
 import { buildChart } from "@/modules/performance/chart";
 import { useMarketSeries } from "@/modules/performance/useMarketSeries";
+import { useEconomicCalendar } from "@/modules/performance/useEconomicCalendar";
 import { PerformanceChart } from "@/modules/performance/components/PerformanceChart";
+
+const impactColor: Record<string, string> = {
+  High: "var(--color-danger-fg)",
+  Medium: "var(--color-warning-fg)",
+  Low: "var(--color-text-muted)",
+};
 
 export default function DashboardPage() {
   const { wallets, loading, walletValue, walletCost, getAssets } = useWallets();
@@ -22,6 +29,7 @@ export default function DashboardPage() {
   const gating = usePlanGating();
   const { rates: currencyDefs } = useCurrencyRates();
   const market = useMarketSeries();
+  const { events: economicEvents } = useEconomicCalendar();
 
   const total = wallets.reduce((s, w) => s + walletValue(w.id), 0);
   const totalCost = wallets.reduce((s, w) => s + walletCost(w.id), 0);
@@ -175,6 +183,24 @@ export default function DashboardPage() {
             })}
           </Card>
         </div>
+
+        <Card className="flex flex-col gap-3">
+          <div className="text-[15px] font-bold">Economic calendar</div>
+          {economicEvents.map((e, i) => (
+            <div key={i} className="flex justify-between items-center py-2 border-b border-[var(--color-border-3)] last:border-b-0 text-[13px]">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono text-[11px] text-[var(--color-text-muted)] w-9">{e.country}</span>
+                <span className="font-semibold">{e.indicator}</span>
+              </div>
+              <div className="flex items-center gap-3.5">
+                <span className="font-mono text-xs text-[var(--color-text-muted)]">{e.date}</span>
+                <span className="font-mono text-xs font-semibold" style={{ color: impactColor[e.impact] }}>
+                  {e.impact}
+                </span>
+              </div>
+            </div>
+          ))}
+        </Card>
       </div>
     </AppPage>
   );

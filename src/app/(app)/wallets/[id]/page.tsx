@@ -9,6 +9,7 @@ import { Card } from "@/design-system/Card";
 import { Button } from "@/design-system/Button";
 import { useWallets } from "@/modules/wallets/WalletsContext";
 import { WalletFormModal } from "@/modules/wallets/components/WalletFormModal";
+import { useCorporateActions } from "@/modules/wallets/useCorporateActions";
 import { useToast } from "@/modules/core/ToastContext";
 import { useConfirm } from "@/modules/core/ConfirmContext";
 import { usd, num, pctStr, posColor } from "@/modules/core/format";
@@ -22,6 +23,8 @@ export default function WalletDetailPage({ params }: PageProps<"/wallets/[id]">)
   const [renaming, setRenaming] = useState(false);
 
   const wallet = getWallet(id);
+  const assets = wallet ? getAssets(id) : [];
+  const { actions: corporateActions } = useCorporateActions(assets.map((a) => a.ticker));
 
   useEffect(() => {
     if (!loading && !wallet) router.replace("/wallets");
@@ -36,7 +39,6 @@ export default function WalletDetailPage({ params }: PageProps<"/wallets/[id]">)
   }
   if (!wallet) return null;
 
-  const assets = getAssets(id);
   const wVal = walletValue(id);
   const wCost = walletCost(id);
   const result = wVal - wCost;
@@ -153,6 +155,32 @@ export default function WalletDetailPage({ params }: PageProps<"/wallets/[id]">)
             </div>
           )}
         </Card>
+
+        {corporateActions.length > 0 && (
+          <Card padding="p-0" className="overflow-hidden">
+            <div className="px-5 py-4.5 border-b border-[var(--color-border)]">
+              <div className="text-[15px] font-bold">Upcoming dividends &amp; splits</div>
+              <div className="text-xs text-[var(--color-text-muted)] mt-0.5">Reported by the external corporate-actions provider.</div>
+            </div>
+            <div>
+              {corporateActions.map((a, i) => (
+                <div
+                  key={`${a.ticker}-${i}`}
+                  className="flex justify-between items-center px-5 py-3 border-b border-[var(--color-border-3)] last:border-b-0 text-sm"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-bold">{a.ticker}</span>
+                    <span className="text-[var(--color-text-muted)]">{a.type}</span>
+                  </div>
+                  <div className="flex items-center gap-3.5">
+                    <span className="font-mono text-xs text-[var(--color-text-muted)]">{a.exDate}</span>
+                    <span className="font-mono font-semibold">{a.type === "Dividend" ? usd(a.amount, 2) : `${a.amount}:1`}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
       </div>
 
       {renaming && (
