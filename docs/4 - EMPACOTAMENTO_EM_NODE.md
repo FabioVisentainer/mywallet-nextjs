@@ -230,7 +230,11 @@ export default defineConfig({
 
 ### Passo 7 — Ligar o pacote ao MyWallet (workspaces)
 
-No `package.json` da **raiz** do projeto, adicione:
+No `package.json` da **raiz** do projeto (`mywallet-nextjs/package.json`, o do app —
+**não** o `packages/design-system/package.json`), adicione as duas chaves **dentro do
+objeto que já existe**: `workspaces` logo abaixo de `"private": true`, e o pacote
+como mais uma linha dentro do `dependencies` que já está lá. Não cole um novo par
+de `{ }` — o arquivo tem que continuar sendo um único objeto JSON.
 
 ```json
 {
@@ -247,6 +251,13 @@ E no terminal do IntelliJ (`View > Tool Windows > Terminal`), na raiz:
 npm install
 npm run build -w @fabiovisentainer/design-system
 ```
+
+> Se aparecer `npm error No workspaces found`, o `workspaces` não está no
+> `package.json` da raiz (ou foi colado no `package.json` do pacote).
+>
+> Se aparecer `npm warn allow-scripts`, é o npm pedindo autorização para rodar o
+> script de instalação de alguma dependência nova (ex.: o `esbuild` usado pelo `tsup`).
+> Rode `npm approve-scripts --allow-scripts-pending`, revise e aprove.
 
 O `npm install` cria um link `node_modules/@fabiovisentainer/design-system` →
 `packages/design-system`. Ou seja: o app usa o pacote "de verdade", mas qualquer
