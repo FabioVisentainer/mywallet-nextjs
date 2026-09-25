@@ -228,91 +228,195 @@ export default defineConfig({
 > importar `@/...`, troque por import relativo (`./FieldShell`). Hoje nenhum
 > importa, mas vale conferir antes do build.
 
-### Passo 7 — Ligar o pacote ao MyWallet (workspaces)
+> **Antes de continuar — terminal do Mac (zsh):** copie **só o comando**, uma
+> linha por vez. O zsh não entende `#` como comentário quando você cola no
+> terminal: `npm run build   # comentário` vira `next build #`, e o Next responde
+> `Invalid project directory provided, no such directory: .../#`.
 
-No `package.json` da **raiz** do projeto (`mywallet-nextjs/package.json`, o do app —
-**não** o `packages/design-system/package.json`), adicione as duas chaves **dentro do
-objeto que já existe**: `workspaces` logo abaixo de `"private": true`, e o pacote
-como mais uma linha dentro do `dependencies` que já está lá. Não cole um novo par
-de `{ }` — o arquivo tem que continuar sendo um único objeto JSON.
+### Passo 7 — Registrar o pacote no projeto (workspaces)
+
+**7.1 — Editar o `package.json` da raiz.** É o arquivo `mywallet-nextjs/package.json`
+(o do app), **não** o `packages/design-system/package.json`. Mexa em dois lugares
+dentro do objeto que já existe — não cole um novo bloco `{ }`:
+
+- adicione a linha `"workspaces": ["packages/*"],` logo abaixo de `"private": true,`;
+- dentro de `"dependencies"`, adicione a linha `"@fabiovisentainer/design-system": "*",`.
+
+O começo do arquivo deve ficar assim (o resto continua igual):
 
 ```json
 {
+  "name": "mywallet-nextjs",
+  "version": "0.1.0",
+  "private": true,
   "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    ...
+  },
   "dependencies": {
-    "@fabiovisentainer/design-system": "*"
-  }
-}
+    "@fabiovisentainer/design-system": "*",
+    "@prisma/adapter-better-sqlite3": "^7.9.1",
+    ...
+  },
 ```
 
-E no terminal do IntelliJ (`View > Tool Windows > Terminal`), na raiz:
+**7.2 — Instalar.** Abra o terminal do IntelliJ (`View > Tool Windows > Terminal`),
+na pasta raiz do projeto, e rode:
 
 ```bash
 npm install
+```
+
+Se aparecer `npm warn allow-scripts`, não é erro: o npm está pedindo autorização
+para rodar o script de instalação de uma dependência nova (o `esbuild`, usado pelo
+`tsup`). Revise e aprove com:
+
+```bash
+npm approve-scripts --allow-scripts-pending
+```
+
+**7.3 — Compilar o pacote.**
+
+```bash
 npm run build -w @fabiovisentainer/design-system
 ```
 
-> Se aparecer `npm error No workspaces found`, o `workspaces` não está no
-> `package.json` da raiz (ou foi colado no `package.json` do pacote).
->
-> Se aparecer `npm warn allow-scripts`, é o npm pedindo autorização para rodar o
-> script de instalação de alguma dependência nova (ex.: o `esbuild` usado pelo `tsup`).
-> Rode `npm approve-scripts --allow-scripts-pending`, revise e aprove.
+O `-w` ("workspace") manda o npm rodar o script `build` do pacote, não o do app.
+(No IntelliJ também dá: botão direito em `packages/design-system/package.json` →
+**Show npm Scripts** → duplo clique em `build`.)
 
-O `npm install` cria um link `node_modules/@fabiovisentainer/design-system` →
-`packages/design-system`. Ou seja: o app usa o pacote "de verdade", mas qualquer
-mudança no pacote aparece na hora (depois de rebuild, ou com `npm run dev -w ...`
-rodando em paralelo).
+**7.4 — Fazer o ESLint ignorar o código gerado.** O `dist/` é saída do `tsup`, não
+código escrito à mão — sem isso o `npm run lint` passa a acusar avisos dentro dele.
+Em `eslint.config.mjs`, dentro de `globalIgnores([...])`, adicione:
 
-> No IntelliJ: botão direito no `packages/design-system/package.json` →
-> **Show npm Scripts** abre uma janela com `build` e `dev` clicáveis.
-
-### Passo 8 — Trocar os imports nas telas
-
-Com `Edit > Find > Replace in Path` (**Ctrl+Shift+R** / **⌘⇧R**), com regex ligado:
-
-- Procurar: `from "@/design-system/\w+"`
-- Substituir: `from "@fabiovisentainer/design-system"`
-
-Depois, `Code > Optimize Imports` (**Ctrl+Alt+O** / **⌃⌥O**) no diretório `src`
-junta imports duplicados, por exemplo:
-
-```ts
-// antes
-import { Button } from "@/design-system/Button";
-import { Card } from "@/design-system/Card";
-
-// depois
-import { Button, Card } from "@fabiovisentainer/design-system";
+```js
+"packages/*/dist/**",
 ```
 
-### Passo 9 — Ajustar o Tailwind do app
+**7.5 — Não versionar o que é gerado.** No `.gitignore` da raiz, adicione:
 
-O Tailwind v4 **não varre `node_modules`**. Se não avisar, ele não gera as classes
-usadas dentro dos componentes do pacote e eles aparecem sem estilo. No topo do
-`src/app/globals.css`:
+```
+packages/*/node_modules
+packages/*/dist
+```
+
+O `/node_modules` que já existe no `.gitignore` só vale para a raiz; sem essas
+linhas, o Git passa a listar as pastas geradas do pacote.
+
+✅ **Confira antes de seguir:**
+
+| Verificação | Resultado esperado |
+|---|---|
+| Pasta `packages/design-system/dist/` | contém `index.js`, `index.d.ts`, `index.js.map` e `tokens.css` |
+| Primeira linha de `dist/index.js` | `"use client";` |
+| Pasta `node_modules/@fabiovisentainer/` | contém `design-system` com ícone de atalho (é um link para `packages/design-system`) |
+
+### Passo 8 — Trocar os imports das telas para o nome do pacote
+
+Quando você moveu os arquivos com **F6** no Passo 2, o IntelliJ corrigiu os
+imports usando **caminhos relativos**, por exemplo:
+
+```ts
+import {Card} from "../../../../packages/design-system/src/Card";
+import {Badge} from "../../../../packages/design-system/src/Badge";
+```
+
+Funciona, mas o app está lendo o código-fonte direto, "por fora" do pacote. O
+objetivo é que ele importe igual a qualquer outro projeto faria:
+
+```ts
+import {Card, Badge} from "@fabiovisentainer/design-system";
+```
+
+**8.1 — Substituir em todos os arquivos.** `Edit > Find > Replace in Files`
+(**⌘⇧R** no Mac, **Ctrl+Shift+R** no Windows/Linux). Na janela:
+
+1. Ligue a opção **`.*`** (expressão regular), à direita do campo de busca.
+2. Em **Directory**, escolha a pasta `src` do projeto.
+3. No campo de busca, cole:
+   ```
+   "(\.\./)+packages/design-system/src/\w+"
+   ```
+4. No campo de substituição, cole:
+   ```
+   "@fabiovisentainer/design-system"
+   ```
+5. Clique em **Replace All**.
+
+**8.2 — Juntar os imports repetidos.** Depois da troca, um arquivo pode ficar com
+várias linhas importando do mesmo pacote. Botão direito na pasta `src` →
+**Optimize Imports** (**⌃⌥O** no Mac, **Ctrl+Alt+O** no Windows/Linux). O IntelliJ
+junta tudo em uma linha por arquivo.
+
+✅ **Confira:** busque (**⌘⇧F**) por `packages/design-system/src` dentro de `src` —
+tem que dar **0 resultados**.
+
+### Passo 9 — Importar os tokens e avisar o Tailwind
+
+No Passo 3 as cores saíram do `globals.css` e foram para o pacote. Até este passo
+o app está **sem as cores da marca** — é aqui que elas voltam.
+
+Abra `src/app/globals.css`. A primeira linha é `@import "tailwindcss";`. Logo
+abaixo dela, adicione duas linhas, de modo que o topo do arquivo fique assim:
 
 ```css
 @import "tailwindcss";
 @import "@fabiovisentainer/design-system/tokens.css";
-
-/* avisa o Tailwind para ler as classes usadas no pacote */
 @source "../../node_modules/@fabiovisentainer/design-system/dist";
+
+:root {
+  --background: #F6F7F9;
+  ...
 ```
 
-O caminho do `@source` é **relativo ao próprio `globals.css`**.
+O que cada linha faz:
+
+| Linha | Para quê |
+|---|---|
+| `@import ".../tokens.css"` | traz de volta todos os `--color-*` e as fontes do design system |
+| `@source "..."` | o Tailwind não lê `node_modules` sozinho; sem isso ele não gera as classes usadas dentro dos componentes (botões e cards aparecem sem estilo). O caminho é relativo ao próprio `globals.css` (`src/app/` → sobe 2 pastas → raiz) |
 
 ### Passo 10 — Validar
 
+Rode um comando por vez, na raiz do projeto, esperando cada um terminar.
+
+**10.1 — Lint:**
+
 ```bash
-npm run build -w @fabiovisentainer/design-system   # pacote compila e gera .d.ts
 npm run lint
-npm run build                                        # app Next compila com o pacote
-npm run dev                                          # conferir visualmente
 ```
 
-Checklist visual rápido: login (Input + Alert + Button `lg`), `/wallets`
-(Card, Badge, Button com `href`), `/goals` (ProgressBar), dashboard (StatCard).
+Esperado: termina sem nenhum `error`. (Se aparecer
+`react-hooks/set-state-in-effect` em `useCorporateActions.ts`, é um problema que já
+existia no projeto, independente do pacote — já corrigido no repositório.)
+
+**10.2 — Build de produção do app:**
+
+```bash
+npm run build
+```
+
+Esperado: `✓ Compiled successfully` e a tabela de rotas no final.
+
+**10.3 — Rodar e conferir visualmente:**
+
+```bash
+npm run dev
+```
+
+Abra `http://localhost:3000` e confira:
+
+| Tela | O que olhar |
+|---|---|
+| Login (`/`) | campos (`Input`) com borda, `Alert` vermelho ao errar a senha, botão azul grande |
+| `/wallets` | `Card` branco com borda, `Badge` colorido, botão com link (`Button` com `href`) |
+| `/goals` | `ProgressBar` preenchida com cor |
+| `/dashboard` | `StatCard` com valores em fonte monoespaçada |
+
+Se tudo estiver com as cores e bordas de antes, o app está usando o pacote. Para
+parar o servidor: **Ctrl+C** no terminal.
 
 ## 4. Distribuir para outros projetos
 
@@ -324,8 +428,9 @@ Escolha uma das três formas, da mais simples para a mais "profissional":
 cd packages/design-system
 npm run build
 npm pack
-# gera fabiovisentainer-design-system-0.1.0.tgz
 ```
+
+Isso gera o arquivo `fabiovisentainer-design-system-0.1.0.tgz` dentro de `packages/design-system/`.
 
 No outro projeto:
 
@@ -431,6 +536,9 @@ Enquanto estiver em `0.x`, qualquer `minor` pode quebrar — trate como instáve
 | "Invalid hook call" / duas cópias de React | React em `dependencies` do pacote | Manter React/Next só em `peerDependencies` |
 | `Cannot find module '@/...'` no build do pacote | Alias do app usado dentro do pacote | Usar imports relativos no pacote |
 | IntelliJ não reconhece o pacote nos imports | Índice desatualizado | `File > Invalidate Caches > Invalidate and Restart` |
+| `Invalid project directory provided, no such directory: .../#` | Comando colado com comentário `# ...` no zsh | Colar só o comando, sem o `#` e o texto depois dele |
+| `npm error No workspaces found` | `"workspaces"` ausente no `package.json` da raiz (ou colado no do pacote) | Refazer o Passo 7.1 |
+| `npm run lint` com avisos dentro de `packages/design-system/dist/index.js` | ESLint lendo código gerado | Passo 7.4 |
 | Mudança no pacote não aparece no app | `dist` desatualizado | Rodar `npm run dev -w @fabiovisentainer/design-system` em paralelo ao `npm run dev` |
 
 ## 8. Atalho: sem build (só dentro do monorepo)
