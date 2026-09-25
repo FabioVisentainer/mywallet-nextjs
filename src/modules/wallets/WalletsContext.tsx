@@ -1,8 +1,8 @@
 "use client";
 
-import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import type {Asset, AssetInput, Wallet} from "./types";
-import {walletsService} from "./walletsService";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { Asset, AssetInput, Wallet } from "./types";
+import { walletsService } from "./walletsService";
 
 interface WalletsContextValue {
   wallets: Wallet[];

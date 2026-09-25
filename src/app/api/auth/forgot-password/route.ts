@@ -1,4 +1,4 @@
-import {authService} from "@/server/services/authService";
+import { authService } from "@/server/services/authService";
 
 // Req. 3 — Recuperação de Senha. Resposta sempre genérica, com ou sem conta
 // cadastrada nesse e-mail, pra não permitir enumerar contas.

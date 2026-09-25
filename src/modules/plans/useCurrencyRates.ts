@@ -1,8 +1,8 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import {ApiResourceLoader} from "@/services/apiResourceLoader";
-import type {CurrencyRate} from "@/mocks/external/rates";
+import { useEffect, useState } from "react";
+import { ApiResourceLoader } from "@/services/apiResourceLoader";
+import type { CurrencyRate } from "@/mocks/external/rates";
 
 /** TEMPLATE METHOD — passos variáveis para o feed de câmbio (ver ApiResourceLoader). */
 class CurrencyRatesLoader extends ApiResourceLoader<CurrencyRate[]> {

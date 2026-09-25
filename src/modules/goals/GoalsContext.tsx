@@ -1,8 +1,8 @@
 "use client";
 
-import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import type {Goal, GoalInput} from "./types";
-import {goalsService} from "./goalsService";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { Goal, GoalInput } from "./types";
+import { goalsService } from "./goalsService";
 
 interface GoalsContextValue {
   goals: Goal[];

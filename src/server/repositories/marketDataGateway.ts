@@ -1,11 +1,11 @@
-import {type CurrencyRate, currencyRates} from "@/mocks/external/rates";
-import {getQuote} from "@/mocks/external/quotes";
-import {benchSeries, months, series} from "@/mocks/external/performance";
-import {analystCalls} from "@/mocks/external/analystCalls";
-import {type AssetReference, getAssetReference} from "@/mocks/external/assetReference";
-import {type BrokerSwap, getBrokerSwapById, getPendingBrokerSwaps} from "@/mocks/external/brokerFeed";
-import {type CorporateAction, getUpcomingActions} from "@/mocks/external/corporateActions";
-import {type EconomicEvent, economicEvents} from "@/mocks/external/economicCalendar";
+import { currencyRates, type CurrencyRate } from "@/mocks/external/rates";
+import { getQuote } from "@/mocks/external/quotes";
+import { months, series, benchSeries } from "@/mocks/external/performance";
+import { analystCalls } from "@/mocks/external/analystCalls";
+import { getAssetReference, type AssetReference } from "@/mocks/external/assetReference";
+import { getPendingBrokerSwaps, getBrokerSwapById, type BrokerSwap } from "@/mocks/external/brokerFeed";
+import { getUpcomingActions, type CorporateAction } from "@/mocks/external/corporateActions";
+import { economicEvents, type EconomicEvent } from "@/mocks/external/economicCalendar";
 
 export interface MarketSeriesData {
   months: string[];

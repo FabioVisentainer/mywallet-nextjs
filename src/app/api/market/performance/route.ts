@@ -1,4 +1,4 @@
-import {MarketDataGateway} from "@/server/repositories/marketDataGateway";
+import { MarketDataGateway } from "@/server/repositories/marketDataGateway";
 
 // Simulated external market-data provider response, via the MarketDataGateway singleton.
 export async function GET() {

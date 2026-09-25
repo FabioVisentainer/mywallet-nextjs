@@ -1,7 +1,7 @@
-import type {Metadata} from "next";
-import {Azeret_Mono, Manrope} from "next/font/google";
+import type { Metadata } from "next";
+import { Manrope, Azeret_Mono } from "next/font/google";
 import "./globals.css";
-import {AppProviders} from "@/AppProviders";
+import { AppProviders } from "@/AppProviders";
 
 const manrope = Manrope({
   variable: "--font-manrope",

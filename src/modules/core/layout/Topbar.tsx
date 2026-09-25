@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import {useRouter} from "next/navigation";
-import {useSession} from "../SessionContext";
-import {useCurrencyRates} from "@/modules/plans/useCurrencyRates";
+import { useRouter } from "next/navigation";
+import { useSession } from "../SessionContext";
+import { useCurrencyRates } from "@/modules/plans/useCurrencyRates";
 
 interface Props {
   title: string;

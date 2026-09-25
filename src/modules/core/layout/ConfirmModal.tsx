@@ -1,7 +1,7 @@
 "use client";
 
-import {useConfirm} from "../ConfirmContext";
-import {Modal} from "./Modal";
+import { useConfirm } from "../ConfirmContext";
+import { Modal } from "./Modal";
 
 export function ConfirmModal() {
   const { confirmData, closeConfirm } = useConfirm();

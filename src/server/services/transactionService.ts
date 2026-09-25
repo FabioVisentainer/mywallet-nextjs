@@ -1,5 +1,5 @@
-import {transactionRepository} from "@/server/repositories/transactionRepository";
-import {MarketDataGateway} from "@/server/repositories/marketDataGateway";
+import { transactionRepository } from "@/server/repositories/transactionRepository";
+import { MarketDataGateway } from "@/server/repositories/marketDataGateway";
 
 const TX_TYPES = ["Buy", "Sell", "Swap", "Deposit"];
 

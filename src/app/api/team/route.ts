@@ -1,5 +1,5 @@
-import {ValidatedCreateHandler} from "@/server/controllers/validatedCreateHandler";
-import {type TeamMemberInput, teamMemberService} from "@/server/services/teamMemberService";
+import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
+import { teamMemberService, type TeamMemberInput } from "@/server/services/teamMemberService";
 
 /** TEMPLATE METHOD — passos variáveis para criar um operador do time (ver ValidatedCreateHandler). */
 class CreateTeamMemberHandler extends ValidatedCreateHandler<TeamMemberInput, unknown> {

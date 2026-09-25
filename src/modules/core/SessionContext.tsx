@@ -1,9 +1,9 @@
 "use client";
 
-import {createContext, type ReactNode, useCallback, useContext, useMemo, useState} from "react";
-import {apiFetch} from "@/services/apiClient";
-import {initials as computeInitials} from "./format";
-import type {AccountType, PlanName, Role} from "./types";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { apiFetch } from "@/services/apiClient";
+import { initials as computeInitials } from "./format";
+import type { AccountType, PlanName, Role } from "./types";
 
 interface SessionUser {
   id: string;

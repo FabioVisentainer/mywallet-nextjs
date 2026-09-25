@@ -1,5 +1,5 @@
-import {apiFetch} from "@/services/apiClient";
-import type {TxInput, TxRecord} from "./data";
+import { apiFetch } from "@/services/apiClient";
+import type { TxInput, TxRecord } from "./data";
 
 /** Service (proxy de API) do módulo transactions — única porta de saída pra /api/transactions. */
 export const transactionsService = {

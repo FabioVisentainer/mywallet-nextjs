@@ -1,18 +1,21 @@
 "use client";
 
-import {useState} from "react";
-import {AppPage} from "@/modules/core/layout/AppPage";
-import {Loading} from "@/modules/core/layout/Loading";
-import type {BadgeTone} from "@fabiovisentainer/design-system";
-import {Badge, Button, Card, ProgressBar} from "@fabiovisentainer/design-system";
-import {useGoals} from "@/modules/goals/GoalsContext";
-import {GoalFormModal} from "@/modules/goals/components/GoalFormModal";
-import {usePlanGating} from "@/modules/plans/gating";
-import {LockedFeature} from "@/modules/plans/components/LockedFeature";
-import {useToast} from "@/modules/core/ToastContext";
-import {useConfirm} from "@/modules/core/ConfirmContext";
-import {usd} from "@/modules/core/format";
-import type {GoalInput} from "@/modules/goals/types";
+import { useState } from "react";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@fabiovisentainer/design-system";
+import { Badge } from "@fabiovisentainer/design-system";
+import { Button } from "@fabiovisentainer/design-system";
+import { ProgressBar } from "@fabiovisentainer/design-system";
+import { useGoals } from "@/modules/goals/GoalsContext";
+import { GoalFormModal } from "@/modules/goals/components/GoalFormModal";
+import { usePlanGating } from "@/modules/plans/gating";
+import { LockedFeature } from "@/modules/plans/components/LockedFeature";
+import { useToast } from "@/modules/core/ToastContext";
+import { useConfirm } from "@/modules/core/ConfirmContext";
+import { usd } from "@/modules/core/format";
+import type { BadgeTone } from "@fabiovisentainer/design-system";
+import type { GoalInput } from "@/modules/goals/types";
 
 export default function GoalsPage() {
   const { goals, loading, addGoal, updateGoal, deleteGoal } = useGoals();

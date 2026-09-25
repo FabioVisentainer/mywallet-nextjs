@@ -1,13 +1,13 @@
 "use client";
 
-import type {ReactNode} from "react";
-import {CoreProviders} from "@/modules/core/CoreProviders";
-import {WalletsProvider} from "@/modules/wallets/WalletsContext";
-import {GoalsProvider} from "@/modules/goals/GoalsContext";
-import {NewsProvider} from "@/modules/news/NewsContext";
-import {AdminProvider} from "@/modules/admin/AdminContext";
-import {TeamProvider} from "@/modules/institutional/TeamContext";
-import {PromotionsProvider} from "@/modules/promotions/PromotionsContext";
+import type { ReactNode } from "react";
+import { CoreProviders } from "@/modules/core/CoreProviders";
+import { WalletsProvider } from "@/modules/wallets/WalletsContext";
+import { GoalsProvider } from "@/modules/goals/GoalsContext";
+import { NewsProvider } from "@/modules/news/NewsContext";
+import { AdminProvider } from "@/modules/admin/AdminContext";
+import { TeamProvider } from "@/modules/institutional/TeamContext";
+import { PromotionsProvider } from "@/modules/promotions/PromotionsContext";
 
 /**
  * Wires every feature module's state provider together for the whole app.

@@ -1,8 +1,8 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import {ApiResourceLoader} from "@/services/apiResourceLoader";
-import type {MarketSeries} from "./chart";
+import { useEffect, useState } from "react";
+import { ApiResourceLoader } from "@/services/apiResourceLoader";
+import type { MarketSeries } from "./chart";
 
 const EMPTY: MarketSeries = { months: [], series: [], benchSeries: [] };
 

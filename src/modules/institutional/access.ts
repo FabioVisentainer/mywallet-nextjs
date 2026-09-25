@@ -1,6 +1,6 @@
 "use client";
 
-import {useSession} from "@/modules/core/SessionContext";
+import { useSession } from "@/modules/core/SessionContext";
 
 /**
  * Central place other modules would consult to know if the institutional/ module is unlocked.

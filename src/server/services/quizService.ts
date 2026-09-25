@@ -1,4 +1,4 @@
-import {quizResultRepository} from "@/server/repositories/quizResultRepository";
+import { quizResultRepository } from "@/server/repositories/quizResultRepository";
 
 export interface ProfileResultInput {
   userId: string;

@@ -1,4 +1,4 @@
-import {type ArticleInput, articleService} from "@/server/services/articleService";
+import { articleService, type ArticleInput } from "@/server/services/articleService";
 
 function parseInput(body: Record<string, unknown>): ArticleInput {
   return {

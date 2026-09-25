@@ -1,17 +1,20 @@
 "use client";
 
-import {useState} from "react";
-import {AppPage} from "@/modules/core/layout/AppPage";
-import {Loading} from "@/modules/core/layout/Loading";
-import type {BadgeTone} from "@fabiovisentainer/design-system";
-import {Alert, Badge, Button, Card} from "@fabiovisentainer/design-system";
-import {useTeam} from "@/modules/institutional/TeamContext";
-import {useInstitutionalAccess} from "@/modules/institutional/access";
-import {AddMemberModal} from "@/modules/institutional/components/AddMemberModal";
-import {useToast} from "@/modules/core/ToastContext";
-import {useConfirm} from "@/modules/core/ConfirmContext";
-import {initials} from "@/modules/core/format";
-import type {TeamMemberInput, TeamRole} from "@/modules/institutional/types";
+import { useState } from "react";
+import { AppPage } from "@/modules/core/layout/AppPage";
+import { Loading } from "@/modules/core/layout/Loading";
+import { Card } from "@fabiovisentainer/design-system";
+import { Badge } from "@fabiovisentainer/design-system";
+import { Button } from "@fabiovisentainer/design-system";
+import { Alert } from "@fabiovisentainer/design-system";
+import { useTeam } from "@/modules/institutional/TeamContext";
+import { useInstitutionalAccess } from "@/modules/institutional/access";
+import { AddMemberModal } from "@/modules/institutional/components/AddMemberModal";
+import { useToast } from "@/modules/core/ToastContext";
+import { useConfirm } from "@/modules/core/ConfirmContext";
+import { initials } from "@/modules/core/format";
+import type { BadgeTone } from "@fabiovisentainer/design-system";
+import type { TeamMemberInput, TeamRole } from "@/modules/institutional/types";
 
 const roleTone: Record<TeamRole, BadgeTone> = {
   Trader: "brand",

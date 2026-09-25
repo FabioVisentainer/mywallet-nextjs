@@ -1,8 +1,8 @@
 "use client";
 
-import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import type {ActivityEntry, ManagedUser, ManagedUserInput, UserPermissions, UserRole} from "./types";
-import {usersService} from "./usersService";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { ActivityEntry, ManagedUser, ManagedUserInput, UserPermissions, UserRole } from "./types";
+import { usersService } from "./usersService";
 
 function defaultPerms(role: UserRole): UserPermissions {
   return {

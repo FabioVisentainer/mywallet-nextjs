@@ -1,8 +1,8 @@
 "use client";
 
-import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import type {Promotion, PromotionInput} from "./types";
-import {promotionsService} from "./promotionsService";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { Promotion, PromotionInput } from "./types";
+import { promotionsService } from "./promotionsService";
 
 interface PromotionsContextValue {
   promotions: Promotion[];
