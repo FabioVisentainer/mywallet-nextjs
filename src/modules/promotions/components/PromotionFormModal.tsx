@@ -1,15 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Modal } from "@/modules/core/layout/Modal";
-import { Input } from "@/design-system/Input";
-import { Select } from "@/design-system/Select";
-import { Textarea } from "@/design-system/Textarea";
-import { Button } from "@/design-system/Button";
-import { ApiError } from "@/services/apiClient";
-import { FormSubmitTemplate } from "@/services/formSubmitTemplate";
-import type { PromotionInput } from "../types";
-import type { PlanName } from "@/modules/core/types";
+import {useState} from "react";
+import {Modal} from "@/modules/core/layout/Modal";
+import {Button, Input, Select, Textarea} from "@fabiovisentainer/design-system";
+import {ApiError} from "@/services/apiClient";
+import {FormSubmitTemplate} from "@/services/formSubmitTemplate";
+import type {PromotionInput} from "../types";
+import type {PlanName} from "@/modules/core/types";
 
 interface Props {
   title: string;

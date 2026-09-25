@@ -1,4 +1,4 @@
-import { promotionRepository } from "@/server/repositories/promotionRepository";
+import {promotionRepository} from "@/server/repositories/promotionRepository";
 
 const PLAN_NAMES = ["Standard", "Platinum", "Black"];
 

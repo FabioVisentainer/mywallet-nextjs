@@ -1,4 +1,4 @@
-import { apiFetch } from "@/services/apiClient";
+import {apiFetch} from "@/services/apiClient";
 
 /**
  * TEMPLATE METHOD — exemplo 1 de 3.

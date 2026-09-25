@@ -1,11 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useToast } from "@/modules/core/ToastContext";
-import { ProgressBar } from "@/design-system/ProgressBar";
-import { Button } from "@/design-system/Button";
-import { useQuiz } from "@/modules/quiz/QuizContext";
-import { quiz } from "@/modules/quiz/data";
+import {useRouter} from "next/navigation";
+import {useToast} from "@/modules/core/ToastContext";
+import {Button, ProgressBar} from "@fabiovisentainer/design-system";
+import {useQuiz} from "@/modules/quiz/QuizContext";
+import {quiz} from "@/modules/quiz/data";
 
 export default function QuizPage() {
   const { quizIdx, quizAnswers, answer, next, back } = useQuiz();

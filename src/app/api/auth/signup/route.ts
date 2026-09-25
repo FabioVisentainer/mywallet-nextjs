@@ -1,4 +1,4 @@
-import { authService } from "@/server/services/authService";
+import {authService} from "@/server/services/authService";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));

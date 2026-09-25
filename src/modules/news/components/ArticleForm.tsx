@@ -1,17 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useNews } from "../NewsContext";
-import { useToast } from "@/modules/core/ToastContext";
-import { ApiError } from "@/services/apiClient";
-import { Card } from "@/design-system/Card";
-import { Alert } from "@/design-system/Alert";
-import { Input } from "@/design-system/Input";
-import { Select } from "@/design-system/Select";
-import { Textarea } from "@/design-system/Textarea";
-import { Button } from "@/design-system/Button";
-import type { ArticleInput } from "../types";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {useNews} from "../NewsContext";
+import {useToast} from "@/modules/core/ToastContext";
+import {ApiError} from "@/services/apiClient";
+import {Alert, Button, Card, Input, Select, Textarea} from "@fabiovisentainer/design-system";
+import type {ArticleInput} from "../types";
 
 interface Props {
   mode: "new" | "edit";

@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { Badge } from "@/design-system/Badge";
-import { useNews } from "@/modules/news/NewsContext";
-import { useAnalystCalls } from "@/modules/news/useAnalystCalls";
+import {useState} from "react";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import {Badge, Card} from "@fabiovisentainer/design-system";
+import {useNews} from "@/modules/news/NewsContext";
+import {useAnalystCalls} from "@/modules/news/useAnalystCalls";
 
 const categories = ["All", "Macro", "Equities", "Crypto", "Markets"];
 

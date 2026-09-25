@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { transactionsService } from "./transactionsService";
-import type { TxInput, TxRecord } from "./data";
+import {useCallback, useEffect, useState} from "react";
+import {transactionsService} from "./transactionsService";
+import type {TxInput, TxRecord} from "./data";
 
 export function useTransactions() {
   const [transactions, setTransactions] = useState<TxRecord[]>([]);

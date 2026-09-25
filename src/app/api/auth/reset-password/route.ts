@@ -1,4 +1,4 @@
-import { authService } from "@/server/services/authService";
+import {authService} from "@/server/services/authService";
 
 // Req. 3 — Recuperação de Senha (parte 2): valida o token e grava a nova senha.
 export async function POST(request: Request) {

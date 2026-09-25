@@ -1,18 +1,16 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { StatCard } from "@/design-system/StatCard";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { Button } from "@/design-system/Button";
-import { useWallets } from "@/modules/wallets/WalletsContext";
-import { WalletFormModal } from "@/modules/wallets/components/WalletFormModal";
-import { useCorporateActions } from "@/modules/wallets/useCorporateActions";
-import { useToast } from "@/modules/core/ToastContext";
-import { useConfirm } from "@/modules/core/ConfirmContext";
-import { usd, num, pctStr, posColor } from "@/modules/core/format";
+import {use, useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Button, Card, StatCard} from "@fabiovisentainer/design-system";
+import {Loading} from "@/modules/core/layout/Loading";
+import {useWallets} from "@/modules/wallets/WalletsContext";
+import {WalletFormModal} from "@/modules/wallets/components/WalletFormModal";
+import {useCorporateActions} from "@/modules/wallets/useCorporateActions";
+import {useToast} from "@/modules/core/ToastContext";
+import {useConfirm} from "@/modules/core/ConfirmContext";
+import {num, pctStr, posColor, usd} from "@/modules/core/format";
 
 export default function WalletDetailPage({ params }: PageProps<"/wallets/[id]">) {
   const { id } = use(params);

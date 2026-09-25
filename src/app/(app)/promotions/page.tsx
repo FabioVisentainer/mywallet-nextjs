@@ -1,18 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { Badge } from "@/design-system/Badge";
-import { Button } from "@/design-system/Button";
-import { useSession } from "@/modules/core/SessionContext";
-import { usePromotions } from "@/modules/promotions/PromotionsContext";
-import { PromotionFormModal } from "@/modules/promotions/components/PromotionFormModal";
-import { useToast } from "@/modules/core/ToastContext";
-import { useConfirm } from "@/modules/core/ConfirmContext";
-import type { BadgeTone } from "@/design-system/Badge";
-import type { Promotion, PromotionInput } from "@/modules/promotions/types";
+import {useState} from "react";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import type {BadgeTone} from "@fabiovisentainer/design-system";
+import {Badge, Button, Card} from "@fabiovisentainer/design-system";
+import {useSession} from "@/modules/core/SessionContext";
+import {usePromotions} from "@/modules/promotions/PromotionsContext";
+import {PromotionFormModal} from "@/modules/promotions/components/PromotionFormModal";
+import {useToast} from "@/modules/core/ToastContext";
+import {useConfirm} from "@/modules/core/ConfirmContext";
+import type {Promotion, PromotionInput} from "@/modules/promotions/types";
 
 const emptyInput: PromotionInput = { planName: "Platinum", title: "", description: "", discountPct: "", startsAt: "", endsAt: "" };
 

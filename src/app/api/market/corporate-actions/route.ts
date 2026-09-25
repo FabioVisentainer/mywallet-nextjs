@@ -1,4 +1,4 @@
-import { MarketDataGateway } from "@/server/repositories/marketDataGateway";
+import {MarketDataGateway} from "@/server/repositories/marketDataGateway";
 
 // Simulated external corporate-actions provider (dividends/splits), via the MarketDataGateway singleton.
 export async function GET(request: Request) {

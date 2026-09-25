@@ -1,7 +1,7 @@
-import { walletRepository } from "@/server/repositories/walletRepository";
-import { assetRepository } from "@/server/repositories/assetRepository";
-import { MarketDataGateway } from "@/server/repositories/marketDataGateway";
-import type { Asset } from "@/modules/wallets/types";
+import {walletRepository} from "@/server/repositories/walletRepository";
+import {assetRepository} from "@/server/repositories/assetRepository";
+import {MarketDataGateway} from "@/server/repositories/marketDataGateway";
+import type {Asset} from "@/modules/wallets/types";
 
 function serializeAsset(a: { id: string; ticker: string; name: string; type: string; qty: number; avg: number }): Asset {
   return {

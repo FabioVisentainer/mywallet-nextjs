@@ -1,20 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { StatCard } from "@/design-system/StatCard";
-import { Alert } from "@/design-system/Alert";
-import { Button } from "@/design-system/Button";
-import { usePlanGating } from "@/modules/plans/gating";
-import { useToast } from "@/modules/core/ToastContext";
-import { buildChart } from "@/modules/performance/chart";
-import { useMarketSeries } from "@/modules/performance/useMarketSeries";
-import { PerformanceChart } from "@/modules/performance/components/PerformanceChart";
-import { useWallets } from "@/modules/wallets/WalletsContext";
-import { usd, pctStr, posColor } from "@/modules/core/format";
+import {useMemo, useState} from "react";
+import {useRouter} from "next/navigation";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import {Alert, Button, Card, StatCard} from "@fabiovisentainer/design-system";
+import {usePlanGating} from "@/modules/plans/gating";
+import {useToast} from "@/modules/core/ToastContext";
+import {buildChart} from "@/modules/performance/chart";
+import {useMarketSeries} from "@/modules/performance/useMarketSeries";
+import {PerformanceChart} from "@/modules/performance/components/PerformanceChart";
+import {useWallets} from "@/modules/wallets/WalletsContext";
+import {pctStr, posColor, usd} from "@/modules/core/format";
 
 const periodOptions: [string, number][] = [
   ["All", 24],

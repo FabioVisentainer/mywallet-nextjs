@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "../SessionContext";
-import { navFor } from "../nav";
+import {usePathname, useRouter} from "next/navigation";
+import {useSession} from "../SessionContext";
+import {navFor} from "../nav";
 
 export function Sidebar() {
   const { role, accountType, user, logout } = useSession();

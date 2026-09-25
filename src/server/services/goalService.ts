@@ -1,4 +1,4 @@
-import { goalRepository } from "@/server/repositories/goalRepository";
+import {goalRepository} from "@/server/repositories/goalRepository";
 
 export interface GoalCreateInput {
   name: string;

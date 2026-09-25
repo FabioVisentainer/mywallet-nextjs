@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { apiFetch, ApiError } from "@/services/apiClient";
-import { useWallets } from "@/modules/wallets/WalletsContext";
-import { useToast } from "@/modules/core/ToastContext";
-import { Card } from "@/design-system/Card";
-import { Select } from "@/design-system/Select";
-import { Button } from "@/design-system/Button";
+import {useEffect, useState} from "react";
+import {ApiError, apiFetch} from "@/services/apiClient";
+import {useWallets} from "@/modules/wallets/WalletsContext";
+import {useToast} from "@/modules/core/ToastContext";
+import {Button, Card, Select} from "@fabiovisentainer/design-system";
 
 interface BrokerSwap {
   id: string;

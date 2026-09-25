@@ -1,7 +1,7 @@
 "use client";
 
-import { useSession } from "@/modules/core/SessionContext";
-import type { PlanName } from "@/modules/core/types";
+import {useSession} from "@/modules/core/SessionContext";
+import type {PlanName} from "@/modules/core/types";
 
 /**
  * STRATEGY — exemplo 1 de 3.

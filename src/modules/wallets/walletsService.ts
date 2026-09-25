@@ -1,5 +1,5 @@
-import { apiFetch } from "@/services/apiClient";
-import type { Asset, AssetInput, Wallet } from "./types";
+import {apiFetch} from "@/services/apiClient";
+import type {Asset, AssetInput, Wallet} from "./types";
 
 /** Service (proxy de API) do módulo wallets — única porta de saída pra /api/wallets. */
 export const walletsService = {

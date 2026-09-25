@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ApiResourceLoader } from "@/services/apiResourceLoader";
+import {useEffect, useState} from "react";
+import {ApiResourceLoader} from "@/services/apiResourceLoader";
 
 export interface CorporateAction {
   ticker: string;

@@ -21,7 +21,7 @@ Tipografia: **Manrope** (`--font-manrope`, texto geral) e **Azeret Mono** (`--fo
 ## Componentes
 
 ### `Button`
-`src/design-system/Button.tsx`
+`../packages/design-system/src/Button.tsx`
 
 O botão universal. Renderiza `<button>` normalmente, ou vira um `next/link` estilizado igual quando você passa `href` (para CTAs de navegação) — assim uma tela nunca precisa escolher entre "botão" e "link estilizado de botão".
 
@@ -41,7 +41,7 @@ O botão universal. Renderiza `<button>` normalmente, ou vira um `next/link` est
 Todo o resto (`onClick`, `disabled`, `type`, `style`...) são as props nativas de `<button>` quando `href` não é passado.
 
 ### `Badge`
-`src/design-system/Badge.tsx`
+`../packages/design-system/src/Badge.tsx`
 
 Pílula pequena para status, papéis e categorias.
 
@@ -54,7 +54,7 @@ Pílula pequena para status, papéis e categorias.
 `tone`: `brand` \| `success` \| `danger` \| `warning` \| `purple` \| `neutral` (padrão) \| `dark`. Quando as cores não se encaixam em nenhum tone (ex.: cor por-linha vinda de dados, como o rating de uma recomendação), passe `style` diretamente — ele sobrescreve o `tone`.
 
 ### `Card`
-`src/design-system/Card.tsx`
+`../packages/design-system/src/Card.tsx`
 
 O contêiner branco com borda arredondada usado em quase toda tela — cards de estatística, linhas de lista, painéis de formulário.
 
@@ -64,12 +64,12 @@ O contêiner branco com borda arredondada usado em quase toda tela — cards de 
 ```
 
 ### `StatCard`
-`src/design-system/StatCard.tsx`
+`../packages/design-system/src/StatCard.tsx`
 
 Especialização de `Card` para o padrão "label + valor grande + variação": `<StatCard label="Market value" value={usd(x)} color={posColor(x)} />`.
 
 ### `Alert`
-`src/design-system/Alert.tsx`
+`../packages/design-system/src/Alert.tsx`
 
 Banner de ícone + mensagem — erro de validação de formulário, aviso de plano bloqueado.
 
@@ -100,7 +100,7 @@ Props comuns a `Input`/`Select`/`Textarea`: `label`, `required` (mostra `*` verm
 `Input` também aceita `invalid` (boolean): deixa a borda vermelha **sem** mostrar texto de erro embaixo — útil quando um `Alert` já explica o erro uma vez para o formulário inteiro (ex.: a tela de login, onde e-mail e senha ficam vermelhos mas a mensagem "Invalid email or password." aparece uma vez só, acima).
 
 ### `ProgressBar`
-`src/design-system/ProgressBar.tsx`
+`../packages/design-system/src/ProgressBar.tsx`
 
 Barra de progresso — usada em metas financeiras, no teste de perfil e na alocação sugerida.
 

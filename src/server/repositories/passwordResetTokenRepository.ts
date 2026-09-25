@@ -1,4 +1,4 @@
-import { prisma } from "@/server/prisma";
+import {prisma} from "@/server/prisma";
 
 /** Repository — único lugar que fala com o Prisma para PasswordResetToken. */
 export const passwordResetTokenRepository = {

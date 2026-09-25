@@ -1,5 +1,5 @@
-import { apiFetch } from "@/services/apiClient";
-import type { ActivityEntry, ManagedUser, ManagedUserInput } from "./types";
+import {apiFetch} from "@/services/apiClient";
+import type {ActivityEntry, ManagedUser, ManagedUserInput} from "./types";
 
 /** Service (proxy de API) do módulo admin — única porta de saída pra /api/users. */
 export const usersService = {

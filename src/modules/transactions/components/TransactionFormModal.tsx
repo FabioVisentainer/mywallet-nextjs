@@ -1,14 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Modal } from "@/modules/core/layout/Modal";
-import { Input } from "@/design-system/Input";
-import { Select } from "@/design-system/Select";
-import { Button } from "@/design-system/Button";
-import { ApiError } from "@/services/apiClient";
-import { FormSubmitTemplate } from "@/services/formSubmitTemplate";
-import { useWallets } from "@/modules/wallets/WalletsContext";
-import type { TxInput, TxType } from "../data";
+import {useState} from "react";
+import {Modal} from "@/modules/core/layout/Modal";
+import {Button, Input, Select} from "@fabiovisentainer/design-system";
+import {ApiError} from "@/services/apiClient";
+import {FormSubmitTemplate} from "@/services/formSubmitTemplate";
+import {useWallets} from "@/modules/wallets/WalletsContext";
+import type {TxInput, TxType} from "../data";
 
 interface Props {
   title: string;

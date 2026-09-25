@@ -1,71 +1,10 @@
 @import "tailwindcss";
+@import "@fabiovisentainer/design-system/tokens.css";
+@source "../../node_modules/@fabiovisentainer/design-system/dist";
 
 :root {
   --background: #F6F7F9;
   --foreground: #111A2B;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-manrope);
-  --font-mono: var(--font-azeret-mono);
-
-  /* MyWallet brand palette */
-  --color-ink: #111A2B;
-  --color-ink-2: #1B2942;
-  --color-ink-border: #22314A;
-  --color-ink-border-2: #2C3E5C;
-  --color-ink-muted: #A9B4C6;
-  --color-ink-muted-2: #8E9BB0;
-  --color-ink-muted-3: #7C8AA0;
-  --color-ink-muted-4: #6E7C93;
-  --color-ink-muted-5: #C3CCDA;
-
-  --color-brand: #2563EB;
-  --color-brand-hover: #1D4ED8;
-  --color-brand-soft: #EEF4FF;
-  --color-brand-soft-border: #D8E4FF;
-  --color-brand-soft-bg: #F8FAFF;
-
-  --color-surface: #F6F7F9;
-  --color-card: #ffffff;
-  --color-card-alt: #FAFBFC;
-  --color-border: #E4E7EC;
-  --color-border-2: #D6DAE1;
-  --color-border-3: #F0F2F5;
-
-  --color-text: #111A2B;
-  --color-text-muted: #667085;
-  --color-text-muted-2: #475467;
-  --color-text-muted-3: #344054;
-  --color-text-faint: #98A2B3;
-
-  --color-success: #12B76A;
-  --color-success-fg: #067647;
-  --color-success-bg: #ECFDF3;
-  --color-success-dark-fg: #75E0A7;
-  --color-success-dark-bg: #063E27;
-
-  --color-danger: #D92D20;
-  --color-danger-fg: #B42318;
-  --color-danger-fg-2: #912018;
-  --color-danger-bg: #FEF3F2;
-  --color-danger-border: #FDA29B;
-  --color-danger-dark-bg: #55160C;
-  --color-danger-dark-fg: #FDA29B;
-
-  --color-warning: #DC6803;
-  --color-warning-fg: #B54708;
-  --color-warning-fg-2: #93370D;
-  --color-warning-bg: #FFFAEB;
-  --color-warning-border: #FEDF89;
-  --color-warning-bg-2: #FEF0C7;
-  --color-warning-dark-bg: #4E2A05;
-  --color-warning-dark-fg: #FEC84B;
-
-  --color-purple: #6938EF;
-  --color-purple-bg: #F4F0FF;
 }
 
 body {

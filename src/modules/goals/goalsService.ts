@@ -1,5 +1,5 @@
-import { apiFetch } from "@/services/apiClient";
-import type { Goal, GoalInput } from "./types";
+import {apiFetch} from "@/services/apiClient";
+import type {Goal, GoalInput} from "./types";
 
 /** Service (proxy de API) do módulo goals — única porta de saída pra /api/goals. */
 export const goalsService = {

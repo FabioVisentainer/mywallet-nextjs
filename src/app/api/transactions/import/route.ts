@@ -1,4 +1,4 @@
-import { transactionService } from "@/server/services/transactionService";
+import {transactionService} from "@/server/services/transactionService";
 
 // Importa um swap reportado pelo feed simulado da corretora externa (AIE, ver
 // src/mocks/external/brokerFeed.ts) pro extrato próprio do app (ALI). Req. 16.

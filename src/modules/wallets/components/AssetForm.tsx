@@ -1,18 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useWallets } from "../WalletsContext";
-import { useAssetReference } from "../useAssetReference";
-import { useToast } from "@/modules/core/ToastContext";
-import { usd } from "@/modules/core/format";
-import { ApiError } from "@/services/apiClient";
-import { Card } from "@/design-system/Card";
-import { Alert } from "@/design-system/Alert";
-import { Input } from "@/design-system/Input";
-import { Select } from "@/design-system/Select";
-import { Button } from "@/design-system/Button";
-import type { AssetInput, AssetType } from "../types";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {useWallets} from "../WalletsContext";
+import {useAssetReference} from "../useAssetReference";
+import {useToast} from "@/modules/core/ToastContext";
+import {usd} from "@/modules/core/format";
+import {ApiError} from "@/services/apiClient";
+import {Alert, Button, Card, Input, Select} from "@fabiovisentainer/design-system";
+import type {AssetInput, AssetType} from "../types";
 
 interface Props {
   walletId: string;

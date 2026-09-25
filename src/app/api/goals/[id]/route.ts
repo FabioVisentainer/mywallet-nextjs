@@ -1,4 +1,4 @@
-import { goalService, type GoalCreateInput } from "@/server/services/goalService";
+import {type GoalCreateInput, goalService} from "@/server/services/goalService";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

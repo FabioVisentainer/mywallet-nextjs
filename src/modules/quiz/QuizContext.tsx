@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { quiz, type InvestorProfile } from "./data";
-import { resolveInvestorProfile } from "./profileStrategy";
+import {createContext, type ReactNode, useCallback, useContext, useMemo, useState} from "react";
+import {type InvestorProfile, quiz} from "./data";
+import {resolveInvestorProfile} from "./profileStrategy";
 
 interface QuizContextValue {
   quizIdx: number;

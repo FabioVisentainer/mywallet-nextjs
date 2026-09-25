@@ -1,9 +1,9 @@
-import { userRepository } from "@/server/repositories/userRepository";
-import { passwordResetTokenRepository } from "@/server/repositories/passwordResetTokenRepository";
-import { hashPassword, verifyPassword } from "@/server/password";
-import { prisma } from "@/server/prisma";
-import { screenName } from "@/mocks/external/kycWatchlist";
-import { sendTransactionalEmail } from "@/mocks/external/emailProvider";
+import {userRepository} from "@/server/repositories/userRepository";
+import {passwordResetTokenRepository} from "@/server/repositories/passwordResetTokenRepository";
+import {hashPassword, verifyPassword} from "@/server/password";
+import {prisma} from "@/server/prisma";
+import {screenName} from "@/mocks/external/kycWatchlist";
+import {sendTransactionalEmail} from "@/mocks/external/emailProvider";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i;

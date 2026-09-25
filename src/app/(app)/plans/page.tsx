@@ -1,13 +1,11 @@
 "use client";
 
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Card } from "@/design-system/Card";
-import { Badge } from "@/design-system/Badge";
-import { Button } from "@/design-system/Button";
-import { useSession } from "@/modules/core/SessionContext";
-import { useToast } from "@/modules/core/ToastContext";
-import { planDefs, planMatrixDefs } from "@/modules/plans/data";
-import type { PlanName } from "@/modules/core/types";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Badge, Button, Card} from "@fabiovisentainer/design-system";
+import {useSession} from "@/modules/core/SessionContext";
+import {useToast} from "@/modules/core/ToastContext";
+import {planDefs, planMatrixDefs} from "@/modules/plans/data";
+import type {PlanName} from "@/modules/core/types";
 
 const planOrder: PlanName[] = ["Standard", "Platinum", "Black"];
 

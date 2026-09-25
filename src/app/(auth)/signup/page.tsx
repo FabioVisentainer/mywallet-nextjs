@@ -1,15 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/modules/core/ToastContext";
-import { useSession } from "@/modules/core/SessionContext";
-import { apiFetch, ApiError } from "@/services/apiClient";
-import { Card } from "@/design-system/Card";
-import { Alert } from "@/design-system/Alert";
-import { Input } from "@/design-system/Input";
-import { Checkbox } from "@/design-system/Checkbox";
-import { Button } from "@/design-system/Button";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {useToast} from "@/modules/core/ToastContext";
+import {useSession} from "@/modules/core/SessionContext";
+import {ApiError, apiFetch} from "@/services/apiClient";
+import {Alert, Button, Card, Checkbox, Input} from "@fabiovisentainer/design-system";
 
 interface SignupForm {
   name: string;

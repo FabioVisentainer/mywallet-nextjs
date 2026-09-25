@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "../SessionContext";
+import {useEffect} from "react";
+import {usePathname, useRouter} from "next/navigation";
+import {useSession} from "../SessionContext";
 
 const PUBLIC_APP_PATHS = ["/news"];
 

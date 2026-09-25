@@ -1,21 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { StatCard } from "@/design-system/StatCard";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { Button } from "@/design-system/Button";
-import { ProgressBar } from "@/design-system/ProgressBar";
-import { useWallets } from "@/modules/wallets/WalletsContext";
-import { useGoals } from "@/modules/goals/GoalsContext";
-import { usePlanGating } from "@/modules/plans/gating";
-import { useCurrencyRates } from "@/modules/plans/useCurrencyRates";
-import { usd, cur, pctStr, posColor } from "@/modules/core/format";
-import { buildChart } from "@/modules/performance/chart";
-import { useMarketSeries } from "@/modules/performance/useMarketSeries";
-import { useEconomicCalendar } from "@/modules/performance/useEconomicCalendar";
-import { PerformanceChart } from "@/modules/performance/components/PerformanceChart";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Button, Card, ProgressBar, StatCard} from "@fabiovisentainer/design-system";
+import {Loading} from "@/modules/core/layout/Loading";
+import {useWallets} from "@/modules/wallets/WalletsContext";
+import {useGoals} from "@/modules/goals/GoalsContext";
+import {usePlanGating} from "@/modules/plans/gating";
+import {useCurrencyRates} from "@/modules/plans/useCurrencyRates";
+import {cur, pctStr, posColor, usd} from "@/modules/core/format";
+import {buildChart} from "@/modules/performance/chart";
+import {useMarketSeries} from "@/modules/performance/useMarketSeries";
+import {useEconomicCalendar} from "@/modules/performance/useEconomicCalendar";
+import {PerformanceChart} from "@/modules/performance/components/PerformanceChart";
 
 const impactColor: Record<string, string> = {
   High: "var(--color-danger-fg)",

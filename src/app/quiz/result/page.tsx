@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useQuiz } from "@/modules/quiz/QuizContext";
-import { useSession } from "@/modules/core/SessionContext";
-import { apiFetch } from "@/services/apiClient";
-import { profiles } from "@/modules/quiz/data";
-import { Card } from "@/design-system/Card";
-import { Badge } from "@/design-system/Badge";
-import { ProgressBar } from "@/design-system/ProgressBar";
-import { Button } from "@/design-system/Button";
+import {useEffect, useRef} from "react";
+import {useRouter} from "next/navigation";
+import {useQuiz} from "@/modules/quiz/QuizContext";
+import {useSession} from "@/modules/core/SessionContext";
+import {apiFetch} from "@/services/apiClient";
+import {profiles} from "@/modules/quiz/data";
+import {Badge, Button, Card, ProgressBar} from "@fabiovisentainer/design-system";
 
 const scaleOrder: (keyof typeof profiles)[] = ["Conservative", "Moderate", "Aggressive"];
 

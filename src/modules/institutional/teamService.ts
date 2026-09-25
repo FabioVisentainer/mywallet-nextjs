@@ -1,5 +1,5 @@
-import { apiFetch } from "@/services/apiClient";
-import type { TeamMember, TeamMemberInput } from "./types";
+import {apiFetch} from "@/services/apiClient";
+import type {TeamMember, TeamMemberInput} from "./types";
 
 /** Service (proxy de API) do módulo institutional — única porta de saída pra /api/team. */
 export const teamService = {

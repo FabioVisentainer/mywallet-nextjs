@@ -1,4 +1,4 @@
-import { profiles, type InvestorProfile } from "./data";
+import {type InvestorProfile, profiles} from "./data";
 
 type ProfileKey = "Conservative" | "Moderate" | "Aggressive";
 

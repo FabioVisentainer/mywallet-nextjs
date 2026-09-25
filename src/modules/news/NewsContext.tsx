@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { Article, ArticleInput } from "./types";
-import { articlesService } from "./articlesService";
+import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
+import type {Article, ArticleInput} from "./types";
+import {articlesService} from "./articlesService";
 
 interface NewsContextValue {
   articles: Article[];

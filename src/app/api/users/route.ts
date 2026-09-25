@@ -1,5 +1,5 @@
-import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
-import { userService, DuplicateEmailError, type UserCreateInput, type UserSummary } from "@/server/services/userService";
+import {ValidatedCreateHandler} from "@/server/controllers/validatedCreateHandler";
+import {DuplicateEmailError, type UserCreateInput, userService, type UserSummary} from "@/server/services/userService";
 
 /**
  * TEMPLATE METHOD — passos variáveis para a criação administrativa de uma conta

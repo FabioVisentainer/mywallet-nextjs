@@ -1,4 +1,4 @@
-import { walletService } from "@/server/services/walletService";
+import {walletService} from "@/server/services/walletService";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: walletId } = await params;

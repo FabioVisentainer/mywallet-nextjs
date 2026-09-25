@@ -1,5 +1,5 @@
-import { prisma } from "@/server/prisma";
-import { MarketDataGateway } from "@/server/repositories/marketDataGateway";
+import {prisma} from "@/server/prisma";
+import {MarketDataGateway} from "@/server/repositories/marketDataGateway";
 
 // Simulated external exchange swap-history feed, via the MarketDataGateway singleton.
 // Excludes swaps already imported into the Transaction ledger (Transaction.externalRef).

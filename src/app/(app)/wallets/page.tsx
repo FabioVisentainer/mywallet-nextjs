@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import {useState} from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { Button } from "@/design-system/Button";
-import { useWallets } from "@/modules/wallets/WalletsContext";
-import { WalletFormModal } from "@/modules/wallets/components/WalletFormModal";
-import { usePlanGating } from "@/modules/plans/gating";
-import { useToast } from "@/modules/core/ToastContext";
-import { useConfirm } from "@/modules/core/ConfirmContext";
-import { usd, pctStr, posColor } from "@/modules/core/format";
+import {useRouter} from "next/navigation";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import {Button, Card} from "@fabiovisentainer/design-system";
+import {useWallets} from "@/modules/wallets/WalletsContext";
+import {WalletFormModal} from "@/modules/wallets/components/WalletFormModal";
+import {usePlanGating} from "@/modules/plans/gating";
+import {useToast} from "@/modules/core/ToastContext";
+import {useConfirm} from "@/modules/core/ConfirmContext";
+import {pctStr, posColor, usd} from "@/modules/core/format";
 
 export default function WalletsPage() {
   const { wallets, loading, getAssets, walletValue, walletCost, addWallet, renameWallet, deleteWallet } = useWallets();

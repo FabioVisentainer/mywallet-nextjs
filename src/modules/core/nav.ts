@@ -1,4 +1,4 @@
-import type { AccountType, Role } from "./types";
+import type {AccountType, Role} from "./types";
 
 export interface NavItem {
   href: string;

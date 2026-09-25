@@ -1,5 +1,5 @@
-import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
-import { goalService, type GoalCreateInput } from "@/server/services/goalService";
+import {ValidatedCreateHandler} from "@/server/controllers/validatedCreateHandler";
+import {type GoalCreateInput, goalService} from "@/server/services/goalService";
 
 /** TEMPLATE METHOD — passos variáveis para criar uma meta financeira (ver ValidatedCreateHandler). */
 class CreateGoalHandler extends ValidatedCreateHandler<GoalCreateInput, unknown> {

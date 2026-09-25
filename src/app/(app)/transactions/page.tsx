@@ -1,20 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { Badge } from "@/design-system/Badge";
-import { Button } from "@/design-system/Button";
-import { usePlanGating } from "@/modules/plans/gating";
-import { LockedFeature } from "@/modules/plans/components/LockedFeature";
-import { useToast } from "@/modules/core/ToastContext";
-import { useConfirm } from "@/modules/core/ConfirmContext";
-import { typeStyle, type TxInput, type TxType } from "@/modules/transactions/data";
-import { useTransactions } from "@/modules/transactions/useTransactions";
-import { BrokerImportPanel } from "@/modules/transactions/components/BrokerImportPanel";
-import { TransactionFormModal } from "@/modules/transactions/components/TransactionFormModal";
-import { usd, posColor } from "@/modules/core/format";
+import {useState} from "react";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import {Badge, Button, Card} from "@fabiovisentainer/design-system";
+import {usePlanGating} from "@/modules/plans/gating";
+import {LockedFeature} from "@/modules/plans/components/LockedFeature";
+import {useToast} from "@/modules/core/ToastContext";
+import {useConfirm} from "@/modules/core/ConfirmContext";
+import {type TxInput, type TxType, typeStyle} from "@/modules/transactions/data";
+import {useTransactions} from "@/modules/transactions/useTransactions";
+import {BrokerImportPanel} from "@/modules/transactions/components/BrokerImportPanel";
+import {TransactionFormModal} from "@/modules/transactions/components/TransactionFormModal";
+import {posColor, usd} from "@/modules/core/format";
 
 const filters: (TxType | "All")[] = ["All", "Buy", "Sell", "Swap", "Deposit"];
 

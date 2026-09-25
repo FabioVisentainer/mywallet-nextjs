@@ -1,20 +1,16 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { Badge } from "@/design-system/Badge";
-import { Alert } from "@/design-system/Alert";
-import { Select } from "@/design-system/Select";
-import { Button } from "@/design-system/Button";
-import { useAdmin } from "@/modules/admin/AdminContext";
-import { useToast } from "@/modules/core/ToastContext";
-import { useConfirm } from "@/modules/core/ConfirmContext";
-import { initials } from "@/modules/core/format";
-import type { BadgeTone } from "@/design-system/Badge";
-import type { ActivityEntry, UserPermissions, UserRole } from "@/modules/admin/types";
+import {use, useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import type {BadgeTone} from "@fabiovisentainer/design-system";
+import {Alert, Badge, Button, Card, Select} from "@fabiovisentainer/design-system";
+import {useAdmin} from "@/modules/admin/AdminContext";
+import {useToast} from "@/modules/core/ToastContext";
+import {useConfirm} from "@/modules/core/ConfirmContext";
+import {initials} from "@/modules/core/format";
+import type {ActivityEntry, UserPermissions, UserRole} from "@/modules/admin/types";
 
 const roleStyle: Record<UserRole, [string, string]> = {
   Investor: ["var(--color-brand-soft)", "var(--color-brand)"],

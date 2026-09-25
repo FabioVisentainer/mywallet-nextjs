@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { TeamMember, TeamMemberInput } from "./types";
-import { teamService } from "./teamService";
+import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
+import type {TeamMember, TeamMemberInput} from "./types";
+import {teamService} from "./teamService";
 
 interface TeamContextValue {
   members: TeamMember[];

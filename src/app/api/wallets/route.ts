@@ -1,4 +1,4 @@
-import { walletService } from "@/server/services/walletService";
+import {walletService} from "@/server/services/walletService";
 
 export async function GET() {
   const data = await walletService.list();

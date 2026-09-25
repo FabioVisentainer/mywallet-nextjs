@@ -1,4 +1,4 @@
-import { teamMemberRepository } from "@/server/repositories/teamMemberRepository";
+import {teamMemberRepository} from "@/server/repositories/teamMemberRepository";
 
 export interface TeamMemberInput {
   name: string;

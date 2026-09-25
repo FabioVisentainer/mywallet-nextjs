@@ -1,4 +1,4 @@
-import { teamMemberService, type TeamMemberInput } from "@/server/services/teamMemberService";
+import {type TeamMemberInput, teamMemberService} from "@/server/services/teamMemberService";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

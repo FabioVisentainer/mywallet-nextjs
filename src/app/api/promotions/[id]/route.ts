@@ -1,4 +1,4 @@
-import { promotionService, type PromotionInput } from "@/server/services/promotionService";
+import {type PromotionInput, promotionService} from "@/server/services/promotionService";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

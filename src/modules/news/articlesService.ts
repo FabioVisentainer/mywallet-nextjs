@@ -1,5 +1,5 @@
-import { apiFetch } from "@/services/apiClient";
-import type { Article, ArticleInput } from "./types";
+import {apiFetch} from "@/services/apiClient";
+import type {Article, ArticleInput} from "./types";
 
 /** Service (proxy de API) do módulo news — única porta de saída pra /api/articles. */
 export const articlesService = {

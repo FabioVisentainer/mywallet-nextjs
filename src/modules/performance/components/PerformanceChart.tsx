@@ -1,7 +1,7 @@
 "use client";
 
-import { useId } from "react";
-import type { ChartResult } from "../chart";
+import {useId} from "react";
+import type {ChartResult} from "../chart";
 
 interface Props {
   chart: ChartResult;

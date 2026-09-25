@@ -1,4 +1,4 @@
-import { articleRepository } from "@/server/repositories/articleRepository";
+import {articleRepository} from "@/server/repositories/articleRepository";
 
 export interface ArticleInput {
   title: string;

@@ -1,5 +1,5 @@
-import { apiFetch } from "@/services/apiClient";
-import type { Promotion, PromotionInput } from "./types";
+import {apiFetch} from "@/services/apiClient";
+import type {Promotion, PromotionInput} from "./types";
 
 /** Service (proxy de API) do módulo promotions — única porta de saída pra /api/promotions. */
 export const promotionsService = {

@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Modal } from "@/modules/core/layout/Modal";
-import { Input } from "@/design-system/Input";
-import { Button } from "@/design-system/Button";
-import { ApiError } from "@/services/apiClient";
-import { FormSubmitTemplate } from "@/services/formSubmitTemplate";
+import {useState} from "react";
+import {Modal} from "@/modules/core/layout/Modal";
+import {Button, Input} from "@fabiovisentainer/design-system";
+import {ApiError} from "@/services/apiClient";
+import {FormSubmitTemplate} from "@/services/formSubmitTemplate";
 
 interface Props {
   title: string;

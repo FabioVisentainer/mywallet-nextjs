@@ -1,11 +1,11 @@
 "use client";
 
-import { use, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { AssetForm } from "@/modules/wallets/components/AssetForm";
-import { useWallets } from "@/modules/wallets/WalletsContext";
+import {use, useEffect} from "react";
+import {useRouter} from "next/navigation";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import {AssetForm} from "@/modules/wallets/components/AssetForm";
+import {useWallets} from "@/modules/wallets/WalletsContext";
 
 export default function NewAssetPage({ params }: PageProps<"/wallets/[id]/assets/new">) {
   const { id } = use(params);

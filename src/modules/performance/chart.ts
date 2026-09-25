@@ -1,4 +1,4 @@
-import { usd, pctStr } from "@/modules/core/format";
+import {pctStr, usd} from "@/modules/core/format";
 
 export interface MarketSeries {
   months: string[];

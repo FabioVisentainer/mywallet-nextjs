@@ -1,14 +1,12 @@
 "use client";
 
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { Card } from "@/design-system/Card";
-import { Badge } from "@/design-system/Badge";
-import { Button } from "@/design-system/Button";
-import { useNews } from "@/modules/news/NewsContext";
-import { useConfirm } from "@/modules/core/ConfirmContext";
-import { useToast } from "@/modules/core/ToastContext";
-import { num } from "@/modules/core/format";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import {Badge, Button, Card} from "@fabiovisentainer/design-system";
+import {useNews} from "@/modules/news/NewsContext";
+import {useConfirm} from "@/modules/core/ConfirmContext";
+import {useToast} from "@/modules/core/ToastContext";
+import {num} from "@/modules/core/format";
 
 export default function AnalystStudioPage() {
   const { articles, loading, deleteArticle } = useNews();

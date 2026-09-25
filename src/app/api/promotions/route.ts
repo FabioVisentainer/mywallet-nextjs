@@ -1,5 +1,5 @@
-import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
-import { promotionService, type PromotionInput } from "@/server/services/promotionService";
+import {ValidatedCreateHandler} from "@/server/controllers/validatedCreateHandler";
+import {type PromotionInput, promotionService} from "@/server/services/promotionService";
 
 interface PromotionCreateInput extends PromotionInput {
   createdBy: string;

@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { Topbar } from "./Topbar";
+import type {ReactNode} from "react";
+import {Topbar} from "./Topbar";
 
 interface Props {
   title: string;

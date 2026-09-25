@@ -1,7 +1,6 @@
 "use client";
 
-import { Card } from "@/design-system/Card";
-import { Button } from "@/design-system/Button";
+import {Button, Card} from "@fabiovisentainer/design-system";
 
 interface Props {
   title: string;

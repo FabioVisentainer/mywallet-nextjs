@@ -1,15 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import {useState} from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/modules/core/SessionContext";
-import { useToast } from "@/modules/core/ToastContext";
-import { Alert } from "@/design-system/Alert";
-import { Input } from "@/design-system/Input";
-import { Button } from "@/design-system/Button";
-import { ApiError } from "@/services/apiClient";
-import type { Role } from "@/modules/core/types";
+import {useRouter} from "next/navigation";
+import {useSession} from "@/modules/core/SessionContext";
+import {useToast} from "@/modules/core/ToastContext";
+import {Alert, Button, Input} from "@fabiovisentainer/design-system";
+import {ApiError} from "@/services/apiClient";
+import type {Role} from "@/modules/core/types";
 
 const roleCards = [
   { initials: "AS", name: "Ana Souza", desc: "Investor · 3 wallets", email: "ana.souza@mywallet.io" },

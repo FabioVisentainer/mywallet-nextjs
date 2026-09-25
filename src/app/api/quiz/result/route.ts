@@ -1,5 +1,5 @@
-import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
-import { quizService, type ProfileResultInput } from "@/server/services/quizService";
+import {ValidatedCreateHandler} from "@/server/controllers/validatedCreateHandler";
+import {type ProfileResultInput, quizService} from "@/server/services/quizService";
 
 // Req. 6 — Teste de Perfil de Investidor. Cada tentativa concluída ("realizar"
 // ou "refazer") vira um novo registro — histórico, não é CRUD (ver 3 - CRUD.md).

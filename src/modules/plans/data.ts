@@ -1,4 +1,4 @@
-import type { PlanName } from "@/modules/core/types";
+import type {PlanName} from "@/modules/core/types";
 
 export interface PlanDef {
   name: PlanName;

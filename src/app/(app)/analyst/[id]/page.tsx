@@ -1,11 +1,11 @@
 "use client";
 
-import { use, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { AppPage } from "@/modules/core/layout/AppPage";
-import { Loading } from "@/modules/core/layout/Loading";
-import { ArticleForm } from "@/modules/news/components/ArticleForm";
-import { useNews } from "@/modules/news/NewsContext";
+import {use, useEffect} from "react";
+import {useRouter} from "next/navigation";
+import {AppPage} from "@/modules/core/layout/AppPage";
+import {Loading} from "@/modules/core/layout/Loading";
+import {ArticleForm} from "@/modules/news/components/ArticleForm";
+import {useNews} from "@/modules/news/NewsContext";
 
 export default function EditArticlePage({ params }: PageProps<"/analyst/[id]">) {
   const { id } = use(params);
