@@ -25,19 +25,19 @@ class CorporateActionsLoader extends ApiResourceLoader<CorporateAction[]> {
 
 /** Fetches the (mocked) external corporate-actions provider for the given tickers. */
 export function useCorporateActions(tickers: string[]) {
-  const [actions, setActions] = useState<CorporateAction[]>([]);
+  // Guarda junto a chave (tickers) a que os dados pertencem: quando a lista de
+  // tickers muda ou fica vazia, o hook devolve [] sem precisar de setState no
+  // corpo do effect (regra react-hooks/set-state-in-effect).
+  const [result, setResult] = useState<{ key: string; actions: CorporateAction[] }>({ key: "", actions: [] });
   const key = tickers.join(",");
 
   useEffect(() => {
-    if (!key) {
-      setActions([]);
-      return;
-    }
+    if (!key) return;
     let ignore = false;
     new CorporateActionsLoader(tickers)
       .load()
       .then((a) => {
-        if (!ignore) setActions(a);
+        if (!ignore) setResult({ key, actions: a });
       })
       .catch(() => {});
     return () => {
@@ -46,5 +46,6 @@ export function useCorporateActions(tickers: string[]) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
+  const actions = key && result.key === key ? result.actions : [];
   return { actions };
 }
