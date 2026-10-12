@@ -14,19 +14,17 @@ export interface MarketSeriesData {
 }
 
 /**
- * SINGLETON — exemplo 2 de 2.
+ * SINGLETON (exemplo 2 de 2)
  *
- * Ponto único de acesso aos provedores externos de dados de mercado
- * (cotações, taxas de câmbio, histórico de performance, recomendações de
- * analistas, dados de referência de ativos e feed de swaps de corretora).
+ * Ponto único de acesso aos dados de mercado que vêm de fora: cotações, câmbio,
+ * histórico de performance, recomendações de analistas, dados de referência
+ * dos ativos, feed de swaps da corretora, proventos e calendário econômico.
  *
- * Por quê: antes deste gateway, cada rota de API importava um mock diferente
- * diretamente (@/mocks/external/quotes, /rates, /performance, /analystCalls).
- * Quando esses mocks forem substituídos por chamadas reais a APIs externas
- * (autenticação, rate limit, cache, retry), existe agora UM único lugar para
- * adicionar isso em vez de caçar todo import espalhado pelo código. Uma
- * única instância também permite introduzir cache em memória no futuro sem
- * duplicar estado entre os pontos de uso.
+ * Por que existe: antes, cada rota de API importava o seu mock direto. Quando
+ * esses mocks virarem chamadas para APIs reais (com autenticação, limite de
+ * chamadas, cache e nova tentativa), tudo isso entra só aqui, sem precisar
+ * procurar imports espalhados pelo código. Ter uma única instância também
+ * permite criar um cache em memória compartilhado por todas as rotas.
  */
 export class MarketDataGateway {
   private static instance: MarketDataGateway;

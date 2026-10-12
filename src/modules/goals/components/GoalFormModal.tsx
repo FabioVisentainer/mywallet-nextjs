@@ -17,7 +17,7 @@ interface Props {
 
 type Errors = Partial<Record<keyof GoalInput, string>>;
 
-/** TEMPLATE METHOD — passos variáveis para o envio do formulário de metas (ver FormSubmitTemplate). */
+/** TEMPLATE METHOD: preenche os passos do FormSubmitTemplate para o formulário de metas. */
 class GoalFormSubmit extends FormSubmitTemplate<GoalInput, Errors> {
   constructor(private onSave: (input: GoalInput) => Promise<void>) {
     super();

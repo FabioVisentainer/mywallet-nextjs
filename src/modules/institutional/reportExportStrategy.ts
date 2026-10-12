@@ -6,18 +6,17 @@ export interface ReportRow {
 }
 
 /**
- * STRATEGY — exemplo 3 de 3.
+ * STRATEGY (exemplo 3 de 3)
  *
- * Onde: como o relatório consolidado institucional é montado para exportação —
- * hoje escolhido pelos botões "Export CSV" / "Export PDF" da tela de relatórios.
+ * Define como o relatório consolidado institucional é montado para exportação.
+ * Hoje a escolha vem dos botões Export CSV e Export PDF da tela de relatórios.
  *
- * Por quê: antes, os dois botões chamavam a mesma função `exportFacade(kind)`
- * que só trocava a palavra no toast não existia, de fato, lógica por formato.
- * Cada formato de exportação é uma regra própria (like separado por vírgula vs.
- * um layout de texto corrido), então cada um ganha sua própria classe atrás da
- * mesma interface. Domínio diferente dos outros dois exemplos de Strategy: aqui
- * a variação é "como serializar um relatório", não sobre planos nem sobre
- * classificação de perfil.
+ * Por que existe: antes, os dois botões chamavam a mesma função exportFacade,
+ * que só trocava a palavra na mensagem. Não existia nenhuma lógica por formato.
+ * Como cada formato monta o conteúdo de um jeito (CSV separado por vírgula e
+ * PDF em texto corrido), cada um ganhou sua própria classe com a mesma
+ * interface. É um caso diferente dos outros dois Strategies: aqui a variação é
+ * como montar um relatório.
  */
 export interface ReportExportStrategy {
   readonly label: "CSV" | "PDF";

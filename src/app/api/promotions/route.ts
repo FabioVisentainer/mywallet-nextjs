@@ -6,9 +6,9 @@ interface PromotionCreateInput extends PromotionInput {
 }
 
 /**
- * TEMPLATE METHOD — passos variáveis para o cadastro de uma promoção por tempo
- * determinado (ver ValidatedCreateHandler). createdBy é o id do usuário logado
- * que está criando o registro (enviado pelo cliente a partir da sessão atual).
+ * TEMPLATE METHOD: preenche os passos do ValidatedCreateHandler para cadastrar
+ * uma promoção com prazo. O createdBy é o id do usuário logado que está
+ * criando o registro, enviado pela tela a partir da sessão atual.
  */
 class CreatePromotionHandler extends ValidatedCreateHandler<PromotionCreateInput, unknown> {
   protected parse(body: Record<string, unknown>): PromotionCreateInput {

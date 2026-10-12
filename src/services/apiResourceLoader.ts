@@ -1,27 +1,27 @@
 import {apiFetch} from "@/services/apiClient";
 
 /**
- * TEMPLATE METHOD — exemplo 1 de 3.
+ * TEMPLATE METHOD (exemplo 1 de 3)
  *
- * Define o esqueleto fixo do carregamento de um recurso
- * vindo de uma API (buscar → extrair a parte relevante da resposta), deixando
- * cada subclasse decidir apenas o "onde" (endpoint) e o "o quê" (como extrair
- * os dados da resposta).
+ * Classe base para carregar dados de uma API. O processo é sempre o mesmo:
+ * primeiro busca a URL, depois pega só a parte da resposta que interessa.
+ * Essa ordem fica fixa no método load(). Cada subclasse só informa qual URL
+ * chamar (endpoint) e o que tirar da resposta (extract).
  *
- * Por quê: useCurrencyRates, useMarketSeries e useAnalystCalls tinham o
- * mesmo useEffect praticamente idêntico (fetch → setState → setLoading(false))
- * repetido três vezes, mudando apenas a URL e o formato da resposta. Duplicar
- * esse esqueleto é duplicar um algoritmo qualquer ajuste futuro (tratamento
- * de erro, retry, log) precisaria ser copiado nos três lugares.
+ * Por que existe: useCurrencyRates, useMarketSeries e useAnalystCalls tinham
+ * o mesmo useEffect repetido (buscar os dados, salvar no estado e tirar o
+ * loading), mudando só a URL e o formato da resposta. Com essa classe, uma
+ * melhoria futura, como tratar erro, tentar de novo ou registrar log, é feita
+ * em um lugar só e vale para todos os hooks.
  */
 export abstract class ApiResourceLoader<T> {
-  /** Passo variável 1: qual endpoint chamar. */
+  /** Passo variável 1: qual URL chamar. */
   protected abstract endpoint(): string;
 
-  /** Passo variável 2: como extrair o dado útil da resposta JSON crua. */
+  /** Passo variável 2: qual parte da resposta usar. */
   protected abstract extract(raw: unknown): T;
 
-  /** Método-modelo: a ordem dos passos é fixa e não é alterada pelas subclasses. */
+  /** Método-modelo: executa os passos sempre na mesma ordem. As subclasses não alteram essa ordem. */
   async load(): Promise<T> {
     const raw = await apiFetch<unknown>(this.endpoint());
     return this.extract(raw);

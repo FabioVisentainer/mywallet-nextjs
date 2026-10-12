@@ -17,7 +17,7 @@ interface Props {
 
 type Errors = Partial<Record<keyof PromotionInput, string>>;
 
-/** TEMPLATE METHOD — passos variáveis para o envio do formulário de promoções (ver FormSubmitTemplate). */
+/** TEMPLATE METHOD: preenche os passos do FormSubmitTemplate para o formulário de promoções. */
 class PromotionFormSubmit extends FormSubmitTemplate<PromotionInput, Errors> {
   constructor(private onSave: (input: PromotionInput) => Promise<void>) {
     super();

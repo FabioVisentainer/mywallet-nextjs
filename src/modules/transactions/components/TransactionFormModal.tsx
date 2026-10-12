@@ -19,7 +19,7 @@ interface Props {
 
 type Errors = Partial<Record<keyof TxInput, string>>;
 
-/** TEMPLATE METHOD — passos variáveis para o envio do formulário de transações (ver FormSubmitTemplate). */
+/** TEMPLATE METHOD: preenche os passos do FormSubmitTemplate para o formulário de transações. */
 class TransactionFormSubmit extends FormSubmitTemplate<TxInput, Errors> {
   constructor(private onSave: (input: TxInput) => Promise<void>) {
     super();

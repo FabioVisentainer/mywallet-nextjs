@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ApiResourceLoader } from "@/services/apiResourceLoader";
 import type { CurrencyRate } from "@/mocks/external/rates";
 
-/** TEMPLATE METHOD — passos variáveis para o feed de câmbio (ver ApiResourceLoader). */
+/** TEMPLATE METHOD: preenche os passos do ApiResourceLoader para buscar as taxas de câmbio. */
 class CurrencyRatesLoader extends ApiResourceLoader<CurrencyRate[]> {
   protected endpoint() {
     return "/api/market/rates";

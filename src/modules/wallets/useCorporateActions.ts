@@ -10,7 +10,7 @@ export interface CorporateAction {
   amount: number;
 }
 
-/** TEMPLATE METHOD — passos variáveis para o calendário de proventos/splits (ver ApiResourceLoader). */
+/** TEMPLATE METHOD: preenche os passos do ApiResourceLoader para buscar os próximos proventos e splits. */
 class CorporateActionsLoader extends ApiResourceLoader<CorporateAction[]> {
   constructor(private tickers: string[]) {
     super();

@@ -1,33 +1,32 @@
 /**
- * TEMPLATE METHOD — exemplo 3 de 3.
+ * TEMPLATE METHOD (exemplo 3 de 3)
  *
- * Define o esqueleto fixo do envio de um formulário no
- * cliente: validar (opcional) → marcar "salvando" → chamar a API → se der
- * erro, traduzir esse erro para algo exibível na tela → desmarcar "salvando".
- * A ordem é sempre a mesma; cada subclasse só diz **o que** validar, **como**
- * salvar e **como** transformar uma falha em algo que o formulário mostra.
+ * Classe base para o envio de formulários na tela. O processo é sempre o
+ * mesmo: validar (se a subclasse quiser), marcar o botão como salvando, chamar
+ * a API, transformar um possível erro em algo que a tela consiga mostrar e, no
+ * fim, desmarcar o salvando. Essa ordem fica fixa no método submit(). Cada
+ * subclasse só informa o que validar, como salvar e como mostrar o erro.
  *
- * Por quê: `GoalFormModal` e `WalletFormModal` repetiam o mesmo
- * `try { await onSave(...) } catch { ... } finally { setSaving(false) }`,
- * mudando apenas se havia validação client-side e o formato do erro (um
- * `Record` por campo vs. uma única mensagem). Domínio diferente dos outros
- * dois exemplos: este é sobre o ciclo de vida de um formulário no navegador,
- * não sobre ler dados externos nem sobre persistir no servidor.
+ * Por que existe: GoalFormModal e WalletFormModal repetiam o mesmo try, catch
+ * e finally em volta do onSave, mudando só se tinha validação na tela e o
+ * formato do erro (um erro por campo ou uma mensagem única). É um caso
+ * diferente dos outros dois exemplos: aqui o foco é o ciclo de um formulário
+ * no navegador.
  */
 export abstract class FormSubmitTemplate<TInput, TError> {
-  /** Passo variável opcional: validação client-side. `null` (padrão) = sem validação própria. */
+  /** Hook (opcional): validação na tela. Por padrão devolve null, ou seja, não valida nada. */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected validate(input: TInput): TError | null {
     return null;
   }
 
-  /** Passo variável: como de fato salvar (normalmente delega para uma prop `onSave`). */
+  /** Passo variável: como salvar de fato (normalmente chama a prop onSave). */
   protected abstract save(input: TInput): Promise<void>;
 
-  /** Passo variável: como transformar uma falha de `save` em algo exibível. */
+  /** Passo variável: como transformar um erro do save em algo que a tela mostra. */
   protected abstract mapError(err: unknown): TError;
 
-  /** Método-modelo: validate → onSaving(true) → save → mapError/finally. Ordem fixa. */
+  /** Método-modelo: valida, marca salvando, salva, trata o erro e desmarca salvando, sempre nessa ordem. */
   async submit(input: TInput, onSaving: (saving: boolean) => void): Promise<TError | null> {
     const validationError = this.validate(input);
     if (validationError) return validationError;

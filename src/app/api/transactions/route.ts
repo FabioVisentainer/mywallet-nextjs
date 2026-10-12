@@ -2,9 +2,10 @@ import {ValidatedCreateHandler} from "@/server/controllers/validatedCreateHandle
 import {type TransactionInput, transactionService} from "@/server/services/transactionService";
 
 /**
- * TEMPLATE METHOD — passos variáveis para lançar uma transação manual (ver ValidatedCreateHandler).
- * A regra de sinal do total vive em transactionService.computeTotal — ver o
- * comentário lá para a convenção (Buy debita, Sell/Deposit creditam, Swap manual = 0).
+ * TEMPLATE METHOD: preenche os passos do ValidatedCreateHandler para lançar
+ * uma transação manual. A regra do sinal do total fica em
+ * transactionService.computeTotal (Buy debita, Sell e Deposit creditam, Swap
+ * manual fica zero).
  */
 class CreateTransactionHandler extends ValidatedCreateHandler<TransactionInput, unknown> {
   protected parse(body: Record<string, unknown>): TransactionInput {

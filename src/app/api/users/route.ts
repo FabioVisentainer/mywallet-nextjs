@@ -2,10 +2,10 @@ import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHand
 import { userService, DuplicateEmailError, type UserCreateInput, type UserSummary } from "@/server/services/userService";
 
 /**
- * TEMPLATE METHOD — passos variáveis para a criação administrativa de uma conta
- * (ver ValidatedCreateHandler). Distinto de /api/auth/signup: aqui é um
- * administrador cadastrando a conta de outra pessoa a partir da tela de gestão
- * de usuários, então não passa pela checagem de watchlist AML/KYC do auto-cadastro.
+ * TEMPLATE METHOD: preenche os passos do ValidatedCreateHandler para um
+ * administrador criar a conta de outra pessoa pela tela de gestão de usuários.
+ * É diferente do /api/auth/signup, então não passa pela checagem da lista
+ * AML/KYC que existe no cadastro feito pelo próprio usuário.
  */
 class CreateUserHandler extends ValidatedCreateHandler<UserCreateInput, UserSummary> {
   protected parse(body: Record<string, unknown>): UserCreateInput {

@@ -1,7 +1,7 @@
 import { ValidatedCreateHandler } from "@/server/controllers/validatedCreateHandler";
 import { teamMemberService, type TeamMemberInput } from "@/server/services/teamMemberService";
 
-/** TEMPLATE METHOD — passos variáveis para criar um operador do time (ver ValidatedCreateHandler). */
+/** TEMPLATE METHOD: preenche os passos do ValidatedCreateHandler para criar um operador da equipe. */
 class CreateTeamMemberHandler extends ValidatedCreateHandler<TeamMemberInput, unknown> {
   protected parse(body: Record<string, unknown>): TeamMemberInput {
     return {

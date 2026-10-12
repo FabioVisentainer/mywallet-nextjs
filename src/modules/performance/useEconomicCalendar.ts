@@ -10,7 +10,7 @@ export interface EconomicEvent {
   impact: "Low" | "Medium" | "High";
 }
 
-/** TEMPLATE METHOD — passos variáveis para o calendário econômico (ver ApiResourceLoader). */
+/** TEMPLATE METHOD: preenche os passos do ApiResourceLoader para buscar o calendário econômico. */
 class EconomicCalendarLoader extends ApiResourceLoader<EconomicEvent[]> {
   protected endpoint() {
     return "/api/market/economic-calendar";

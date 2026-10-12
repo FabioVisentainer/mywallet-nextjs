@@ -1,7 +1,7 @@
 import {ValidatedCreateHandler} from "@/server/controllers/validatedCreateHandler";
 import {type GoalCreateInput, goalService} from "@/server/services/goalService";
 
-/** TEMPLATE METHOD — passos variáveis para criar uma meta financeira (ver ValidatedCreateHandler). */
+/** TEMPLATE METHOD: preenche os passos do ValidatedCreateHandler para criar uma meta financeira. */
 class CreateGoalHandler extends ValidatedCreateHandler<GoalCreateInput, unknown> {
   protected parse(body: Record<string, unknown>): GoalCreateInput {
     return {

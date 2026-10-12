@@ -6,7 +6,7 @@ import type {analystCalls as AnalystCallsType} from "@/mocks/external/analystCal
 
 type AnalystCall = (typeof AnalystCallsType)[number];
 
-/** TEMPLATE METHOD — passos variáveis para o feed de recomendações (ver ApiResourceLoader). */
+/** TEMPLATE METHOD: preenche os passos do ApiResourceLoader para buscar as recomendações de analistas. */
 class AnalystCallsLoader extends ApiResourceLoader<AnalystCall[]> {
   protected endpoint() {
     return "/api/market/analyst-calls";

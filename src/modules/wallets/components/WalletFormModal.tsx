@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
 }
 
-/** TEMPLATE METHOD — passos variáveis para o envio do formulário de carteira (ver FormSubmitTemplate). */
+/** TEMPLATE METHOD: preenche os passos do FormSubmitTemplate para o formulário de carteira. */
 class WalletFormSubmit extends FormSubmitTemplate<string, string> {
   constructor(private onSave: (name: string) => Promise<void>) {
     super();

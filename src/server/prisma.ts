@@ -6,16 +6,16 @@ declare global {
 }
 
 /**
- * SINGLETON — exemplo 1 de 2.
+ * SINGLETON (exemplo 1 de 2)
  *
- * Garante uma única instância do PrismaClient em toda a aplicação.
+ * Garante que exista um único PrismaClient em toda a aplicação.
  *
- * Por quê: cada PrismaClient abre seu próprio pool de conexões com o banco.
- * Em desenvolvimento o Next.js recarrega os módulos a cada mudança de código
- * (hot reload), o que recriaria o cliente e o pool de conexões a cada
- * salvamento, se não houvesse uma instância única guardada fora do ciclo de
- * módulos. `globalThis` sobrevive ao hot reload; em produção o próprio
- * carregamento único do módulo já garante a instância única.
+ * Por que existe: cada PrismaClient abre suas próprias conexões com o banco.
+ * Em desenvolvimento, o Next.js recarrega o código a cada arquivo salvo (hot
+ * reload), e sem esse cuidado um cliente novo seria criado a cada save. Por
+ * isso o cliente também fica guardado no globalThis, que não é apagado no hot
+ * reload. Em produção o arquivo carrega uma vez só, então a própria classe já
+ * garante a instância única.
  */
 class PrismaSingleton {
   private static instance: PrismaClient | undefined;

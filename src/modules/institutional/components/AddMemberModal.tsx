@@ -20,7 +20,7 @@ type Errors = Partial<Record<keyof TeamMemberInput, string>>;
 
 const emptyInput: TeamMemberInput = { name: "", email: "", roleInTeam: "Trader" };
 
-/** TEMPLATE METHOD — passos variáveis para o envio do formulário de operadores (ver FormSubmitTemplate). */
+/** TEMPLATE METHOD: preenche os passos do FormSubmitTemplate para o formulário de operadores. */
 class TeamMemberFormSubmit extends FormSubmitTemplate<TeamMemberInput, Errors> {
   constructor(private onSave: (input: TeamMemberInput) => Promise<void>) {
     super();

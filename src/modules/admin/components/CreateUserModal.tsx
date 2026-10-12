@@ -16,7 +16,7 @@ type Errors = Partial<Record<keyof ManagedUserInput, string>>;
 
 const initial: ManagedUserInput = { name: "", email: "", password: "", role: "Investor" };
 
-/** TEMPLATE METHOD — passos variáveis para o envio do formulário de novo usuário (ver FormSubmitTemplate). */
+/** TEMPLATE METHOD: preenche os passos do FormSubmitTemplate para o formulário de novo usuário. */
 class CreateUserFormSubmit extends FormSubmitTemplate<ManagedUserInput, Errors> {
   constructor(private onSave: (input: ManagedUserInput) => Promise<void>) {
     super();

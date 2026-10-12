@@ -10,7 +10,7 @@ export interface AssetReference {
   riskRating: "Low" | "Medium" | "High";
 }
 
-/** TEMPLATE METHOD — passos variáveis para os dados de referência do ativo (ver ApiResourceLoader). */
+/** TEMPLATE METHOD: preenche os passos do ApiResourceLoader para buscar os dados de referência de um ativo. */
 class AssetReferenceLoader extends ApiResourceLoader<AssetReference> {
   constructor(private ticker: string) {
     super();

@@ -4,18 +4,17 @@ import {useSession} from "@/modules/core/SessionContext";
 import type {PlanName} from "@/modules/core/types";
 
 /**
- * STRATEGY — exemplo 1 de 3.
+ * STRATEGY (exemplo 1 de 3)
  *
- * cada plano de assinatura (Standard/Platinum/Black) é uma implementação
- * intercambiável da mesma interface `PlanPolicy`. Em vez de um `isStandard ? a : b`
- * central que só sabe distinguir "Standard" de "não-Standard", cada plano decide,
- * de forma isolada, o que libera.
+ * Cada plano de assinatura (Standard, Platinum e Black) é uma classe que segue
+ * a mesma interface PlanPolicy. Cada plano decide sozinho o que libera, em vez
+ * de um isStandard ? a : b central que só sabe diferenciar o Standard do resto.
  *
- * Por quê: a versão anterior comparava só `plan === "Standard"`, então Platinum e
- * Black eram tratados como idênticos o que já deixa de ser verdade no dia em que
- * um recurso exclusivo do Black (relatórios, recomendações de analista) precisar de
- * checagem própria. Com uma classe por plano, adicionar essa regra é só sobrescrever
- * um método na classe `BlackPlanPolicy`, sem tocar nas outras nem no hook que as usa.
+ * Por que existe: a versão anterior comparava só plan === "Standard", então
+ * Platinum e Black eram tratados como iguais. Isso deixa de funcionar no dia em
+ * que o Black ganhar algo exclusivo, como relatórios ou recomendações de
+ * analistas. Com uma classe por plano, basta sobrescrever um método na
+ * BlackPlanPolicy, sem mexer nos outros planos nem no hook que usa as classes.
  */
 export interface PlanPolicy {
   readonly walletLimit: number | null; // null = sem limite
@@ -25,7 +24,7 @@ export interface PlanPolicy {
   isCurrencyLocked(code: string): boolean;
 }
 
-/** Estratégia concreta 1/3 — plano gratuito, o mais restritivo. */
+/** Estratégia 1 de 3: plano gratuito, o mais restrito. */
 class StandardPlanPolicy implements PlanPolicy {
   readonly walletLimit = 2;
   readonly goalsLocked = true;
@@ -36,7 +35,7 @@ class StandardPlanPolicy implements PlanPolicy {
   }
 }
 
-/** Estratégia concreta 2/3 — libera carteiras, moedas, período completo e metas. */
+/** Estratégia 2 de 3: libera carteiras ilimitadas, todas as moedas, 24 meses de histórico, metas e transações. */
 class PlatinumPlanPolicy implements PlanPolicy {
   readonly walletLimit = null;
   readonly goalsLocked = false;
@@ -47,7 +46,7 @@ class PlatinumPlanPolicy implements PlanPolicy {
   }
 }
 
-/** Estratégia concreta 3/3 — tudo do Platinum; ponto certo para futuras regras exclusivas do Black. */
+/** Estratégia 3 de 3: tem tudo do Platinum. É aqui que entram as regras exclusivas do Black no futuro. */
 class BlackPlanPolicy extends PlatinumPlanPolicy {}
 
 const POLICIES: Record<PlanName, PlanPolicy> = {
@@ -57,9 +56,10 @@ const POLICIES: Record<PlanName, PlanPolicy> = {
 };
 
 /**
- * Central place other modules consult to know what the current plan unlocks.
- * Depending on `plans` from a feature module (wallets, goals, performance, transactions)
- * is an intentional exception — plan gating is inherently cross-cutting.
+ * Contexto do Strategy: pega o plano da sessão, escolhe a estratégia certa e
+ * devolve para as telas o que está liberado. Os módulos de carteiras, metas,
+ * performance e transações dependem daqui de propósito, porque a regra de
+ * plano vale para o app inteiro.
  */
 export function usePlanGating() {
   const { plan } = useSession();

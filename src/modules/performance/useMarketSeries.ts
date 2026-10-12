@@ -6,7 +6,7 @@ import type { MarketSeries } from "./chart";
 
 const EMPTY: MarketSeries = { months: [], series: [], benchSeries: [] };
 
-/** TEMPLATE METHOD — passos variáveis para o histórico de performance (ver ApiResourceLoader). */
+/** TEMPLATE METHOD: preenche os passos do ApiResourceLoader para buscar o histórico de performance. */
 class MarketSeriesLoader extends ApiResourceLoader<MarketSeries> {
   protected endpoint() {
     return "/api/market/performance";
