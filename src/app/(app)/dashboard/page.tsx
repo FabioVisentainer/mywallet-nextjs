@@ -45,7 +45,7 @@ export default function DashboardPage() {
   return (
     <AppPage title="Overview" subtitle="Consolidated position across all wallets">
       <div className="flex flex-col gap-4.5 max-w-[1240px]">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3.5" style={{ gridTemplateColumns: "1.3fr 1fr 1fr 1fr" }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[1.3fr_1fr_1fr_1fr] gap-3.5">
           <div className="bg-[var(--color-ink)] rounded-[14px] p-5 text-white">
             <div className="text-xs text-[var(--color-ink-muted)] font-semibold">Total net worth</div>
             <div className="font-mono text-[30px] font-semibold tracking-tight mt-2">{usd(total)}</div>

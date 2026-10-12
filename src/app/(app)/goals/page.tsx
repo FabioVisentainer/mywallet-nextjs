@@ -76,14 +76,14 @@ export default function GoalsPage() {
           const monthly = Math.max(0, (g.target - g.current) / 18);
 
           return (
-            <Card key={g.id} className="flex gap-5.5 items-center">
-              <div className="flex-1 flex flex-col gap-2.5">
+            <Card key={g.id} className="flex flex-wrap gap-5.5 items-center">
+              <div className="flex-1 min-w-65 flex flex-col gap-2.5">
                 <div className="flex items-center gap-2.5">
                   <div className="text-[15px] font-bold">{g.name}</div>
                   <Badge tone={tone}>{status}</Badge>
                 </div>
                 <ProgressBar value={p} color={barColor} height="h-[9px]" />
-                <div className="flex gap-5.5 text-xs text-[var(--color-text-muted)]">
+                <div className="flex flex-wrap gap-x-5.5 gap-y-1 text-xs text-[var(--color-text-muted)]">
                   <span className="font-mono">
                     {usd(g.current, 0)} of {usd(g.target, 0)}
                   </span>
