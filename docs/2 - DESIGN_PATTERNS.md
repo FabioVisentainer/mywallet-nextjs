@@ -89,8 +89,8 @@ todas atrás da mesma interface.
 - **Interface:** `PlanPolicy`.
 - **Estratégias:** `StandardPlanPolicy` (até 2 carteiras, metas/transações
   bloqueadas, 12 meses, só USD), `PlatinumPlanPolicy` (ilimitado, tudo liberado,
-  24 meses, todas as moedas), `BlackPlanPolicy` (herda o Platinum; ponto de extensão
-  para regras exclusivas do Black).
+  24 meses, todas as moedas), `BlackPlanPolicy` (herda o Platinum e sobrescreve
+  `analystCallsLocked` para liberar as recomendações de analistas, exclusivas do Black).
 - **Por quê:** a versão anterior de `usePlanGating` comparava só
   `plan === "Standard"`, tratando Platinum e Black como idênticos.
 - **O que mudou:** `usePlanGating()` devolve o mesmo formato de antes — as 5 páginas

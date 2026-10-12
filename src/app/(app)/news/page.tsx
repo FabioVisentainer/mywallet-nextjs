@@ -7,12 +7,14 @@ import { Card } from "@fabiovisentainer/design-system";
 import { Badge } from "@fabiovisentainer/design-system";
 import { useNews } from "@/modules/news/NewsContext";
 import { useAnalystCalls } from "@/modules/news/useAnalystCalls";
+import { usePlanGating } from "@/modules/plans/gating";
 
 const categories = ["All", "Macro", "Equities", "Crypto", "Markets"];
 
 export default function NewsPage() {
   const { articles, loading } = useNews();
   const { calls: analystCalls, loading: callsLoading } = useAnalystCalls();
+  const gating = usePlanGating();
   const [cat, setCat] = useState("All");
 
   if (loading || callsLoading) {
@@ -70,15 +72,19 @@ export default function NewsPage() {
             </div>
             <div className="border border-[var(--color-ink-border)] rounded-2xl p-5 flex flex-col gap-3.5">
               <div className="text-xs text-[var(--color-ink-muted-2)] font-bold uppercase tracking-wide">Analyst call</div>
-              {analystCalls.map((c) => (
-                <div key={c.ticker} className="flex justify-between items-center pb-2.5 border-b border-[var(--color-ink-2)]">
-                  <div>
-                    <div className="font-mono text-sm font-semibold">{c.ticker}</div>
-                    <div className="text-[11px] text-[var(--color-ink-muted-2)]">Target {c.target}</div>
+              {gating.analystCallsLocked ? (
+                <div className="text-[13px] leading-relaxed text-[var(--color-ink-muted-2)]">Personalised analyst calls are exclusive to the Black plan.</div>
+              ) : (
+                analystCalls.map((c) => (
+                  <div key={c.ticker} className="flex justify-between items-center pb-2.5 border-b border-[var(--color-ink-2)]">
+                    <div>
+                      <div className="font-mono text-sm font-semibold">{c.ticker}</div>
+                      <div className="text-[11px] text-[var(--color-ink-muted-2)]">Target {c.target}</div>
+                    </div>
+                    <Badge style={{ background: c.bg, color: c.fg }}>{c.rating}</Badge>
                   </div>
-                  <Badge style={{ background: c.bg, color: c.fg }}>{c.rating}</Badge>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         )}

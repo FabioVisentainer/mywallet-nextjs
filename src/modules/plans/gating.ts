@@ -21,6 +21,7 @@ export interface PlanPolicy {
   readonly goalsLocked: boolean;
   readonly transactionsLocked: boolean;
   readonly maxPeriodMonths: number;
+  readonly analystCallsLocked: boolean;
   isCurrencyLocked(code: string): boolean;
 }
 
@@ -30,6 +31,7 @@ class StandardPlanPolicy implements PlanPolicy {
   readonly goalsLocked = true;
   readonly transactionsLocked = true;
   readonly maxPeriodMonths = 12;
+  readonly analystCallsLocked = true;
   isCurrencyLocked(code: string) {
     return code !== "USD";
   }
@@ -41,13 +43,16 @@ class PlatinumPlanPolicy implements PlanPolicy {
   readonly goalsLocked = false;
   readonly transactionsLocked = false;
   readonly maxPeriodMonths = 24;
+  readonly analystCallsLocked: boolean = true;
   isCurrencyLocked() {
     return false;
   }
 }
 
-/** Estratégia 3 de 3: tem tudo do Platinum. É aqui que entram as regras exclusivas do Black no futuro. */
-class BlackPlanPolicy extends PlatinumPlanPolicy {}
+/** Estratégia 3 de 3: tem tudo do Platinum e ainda libera as recomendações de analistas, que são exclusivas do Black. */
+class BlackPlanPolicy extends PlatinumPlanPolicy {
+  readonly analystCallsLocked = false;
+}
 
 const POLICIES: Record<PlanName, PlanPolicy> = {
   Standard: new StandardPlanPolicy(),
@@ -74,5 +79,6 @@ export function usePlanGating() {
     currencyLocked: (code: string) => policy.isCurrencyLocked(code),
     maxPeriodMonths: policy.maxPeriodMonths,
     periodLocked: (months: number) => months > policy.maxPeriodMonths,
+    analystCallsLocked: policy.analystCallsLocked,
   };
 }
