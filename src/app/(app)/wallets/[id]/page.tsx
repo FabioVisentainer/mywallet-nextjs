@@ -44,7 +44,7 @@ export default function WalletDetailPage({ params }: PageProps<"/wallets/[id]">)
   return (
     <AppPage title={wallet.name} subtitle="Assets linked to this wallet" backHref="/wallets">
       <div className="flex flex-col gap-4 max-w-[1240px]">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3.5">
           <StatCard label="Market value" value={usd(wVal)} />
           <StatCard label="Invested cost" value={usd(wCost)} />
           <StatCard label="Result" value={(result >= 0 ? "+" : "−") + usd(Math.abs(result))} color={posColor(result)} />
