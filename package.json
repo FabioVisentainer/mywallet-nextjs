@@ -11,7 +11,8 @@
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:export": "node prisma/database-first/export.mjs"
   },
   "dependencies": {
     "@fabiovisentainer/design-system": "*",
