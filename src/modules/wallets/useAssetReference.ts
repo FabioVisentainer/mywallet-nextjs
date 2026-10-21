@@ -11,7 +11,7 @@ export interface AssetReference {
 }
 
 /** TEMPLATE METHOD: preenche os passos do ApiResourceLoader para buscar os dados de referência de um ativo. */
-class AssetReferenceLoader extends ApiResourceLoader<AssetReference> {
+export class AssetReferenceLoader extends ApiResourceLoader<AssetReference> {
   constructor(private ticker: string) {
     super();
   }

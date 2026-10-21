@@ -3,7 +3,7 @@
 import {useState} from "react";
 import {AppPage} from "@/modules/core/layout/AppPage";
 import {Loading} from "@/modules/core/layout/Loading";
-import {Badge, Button, Card} from "@fabiovisentainer/design-system";
+import {Badge, Button, Card, StatCard} from "@fabiovisentainer/design-system";
 import {usePlanGating} from "@/modules/plans/gating";
 import {LockedFeature} from "@/modules/plans/components/LockedFeature";
 import {useToast} from "@/modules/core/ToastContext";
@@ -48,6 +48,16 @@ export default function TransactionsPage() {
 
   const filtered = transactions.filter((t) => filter === "All" || t.type === filter);
 
+  // Resumo por tipo de operação: totais calculados a partir do campo total de cada
+  // lançamento (nada disso é gravado). Swaps trocam um ativo por outro e não movimentam
+  // dinheiro, por isso ficam fora do fluxo de caixa.
+  const ofType = (type: TxType) => transactions.filter((t) => t.type === type);
+  const sumOf = (type: TxType) => ofType(type).reduce((s, t) => s + Math.abs(t.total), 0);
+  const bought = sumOf("Buy");
+  const sold = sumOf("Sell");
+  const deposited = sumOf("Deposit");
+  const netFlow = sold + deposited - bought;
+
   const handleSave = async (input: TxInput) => {
     if (modalTarget?.id) {
       await updateTransaction(modalTarget.id, input);
@@ -63,6 +73,18 @@ export default function TransactionsPage() {
     <AppPage title="Transactions & swaps" subtitle="Personal audit trail">
       <div className="flex flex-col gap-4 max-w-[1240px]">
         <BrokerImportPanel onImported={refetch} />
+
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3.5">
+          <StatCard label="Bought" value={usd(bought)} note={`${ofType("Buy").length} buy operations`} />
+          <StatCard label="Sold" value={usd(sold)} note={`${ofType("Sell").length} sell operations`} />
+          <StatCard label="Deposited" value={usd(deposited)} note={`${ofType("Deposit").length} deposits`} />
+          <StatCard
+            label="Net cash flow"
+            value={(netFlow >= 0 ? "+" : "−") + usd(Math.abs(netFlow))}
+            color={posColor(netFlow)}
+            note="Sold + deposited − bought (swaps excluded)"
+          />
+        </div>
 
         <div className="flex justify-between items-center gap-4 flex-wrap">
           <div className="flex gap-1.5 bg-[var(--color-border-3)] p-1 rounded-[10px]">

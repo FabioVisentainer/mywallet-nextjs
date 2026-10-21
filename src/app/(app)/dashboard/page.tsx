@@ -13,6 +13,7 @@ import {buildChart} from "@/modules/performance/chart";
 import {useMarketSeries} from "@/modules/performance/useMarketSeries";
 import {useEconomicCalendar} from "@/modules/performance/useEconomicCalendar";
 import {PerformanceChart} from "@/modules/performance/components/PerformanceChart";
+import {useCorporateActions} from "@/modules/wallets/useCorporateActions";
 
 const impactColor: Record<string, string> = {
   High: "var(--color-danger-fg)",
@@ -21,16 +22,27 @@ const impactColor: Record<string, string> = {
 };
 
 export default function DashboardPage() {
-  const { wallets, loading, walletValue, walletCost, getAssets } = useWallets();
+  const { wallets, assets, loading, walletValue, walletCost, getAssets } = useWallets();
   const { goals } = useGoals();
   const gating = usePlanGating();
   const { rates: currencyDefs } = useCurrencyRates();
   const market = useMarketSeries();
   const { events: economicEvents } = useEconomicCalendar();
+  const allAssets = Object.values(assets).flat();
+  const { actions: corporateActions } = useCorporateActions(allAssets.map((a) => a.ticker));
 
   const total = wallets.reduce((s, w) => s + walletValue(w.id), 0);
   const totalCost = wallets.reduce((s, w) => s + walletCost(w.id), 0);
   const pl = total - totalCost;
+
+  // Proventos previstos: para cada dividendo anunciado pelo provedor externo,
+  // quantidade que o investidor tem do ativo (somando todas as carteiras) × valor por ação.
+  const sharesOf = (ticker: string) => allAssets.filter((a) => a.ticker.toUpperCase() === ticker.toUpperCase()).reduce((s, a) => s + a.qty, 0);
+  const incomeRows = corporateActions
+    .filter((a) => a.type === "Dividend")
+    .map((a) => ({ ...a, shares: sharesOf(a.ticker), income: a.amount * sharesOf(a.ticker) }))
+    .sort((x, y) => x.exDate.localeCompare(y.exDate));
+  const expectedIncome = incomeRows.reduce((s, r) => s + r.income, 0);
 
   if (loading || market.loading) {
     return (
@@ -180,6 +192,35 @@ export default function DashboardPage() {
             })}
           </Card>
         </div>
+
+        {incomeRows.length > 0 && (
+          <Card className="flex flex-col gap-3">
+            <div className="flex justify-between items-start gap-4">
+              <div>
+                <div className="text-[15px] font-bold">Upcoming dividend income</div>
+                <div className="text-xs text-[var(--color-text-muted)] mt-0.5">Dividend per share × shares held across all wallets.</div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[var(--color-text-muted)] font-semibold">Expected income</div>
+                <div className="font-mono text-lg font-semibold text-[var(--color-success-fg)]">{usd(expectedIncome)}</div>
+              </div>
+            </div>
+            {incomeRows.map((r) => (
+              <div key={`${r.ticker}-${r.exDate}`} className="flex justify-between items-center py-2 border-b border-[var(--color-border-3)] last:border-b-0 text-[13px]">
+                <div className="flex items-center gap-2.5">
+                  <span className="font-bold">{r.ticker}</span>
+                  <span className="font-mono text-xs text-[var(--color-text-muted)]">ex {r.exDate}</span>
+                </div>
+                <div className="flex items-center gap-3.5">
+                  <span className="font-mono text-xs text-[var(--color-text-muted)]">
+                    {usd(r.amount, 2)} × {r.shares.toLocaleString("en-US")}
+                  </span>
+                  <span className="font-mono font-semibold w-[90px] text-right">{usd(r.income)}</span>
+                </div>
+              </div>
+            ))}
+          </Card>
+        )}
 
         <Card className="flex flex-col gap-3">
           <div className="text-[15px] font-bold">Economic calendar</div>

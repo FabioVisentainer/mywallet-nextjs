@@ -3,11 +3,12 @@
 import {use, useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {AppPage} from "@/modules/core/layout/AppPage";
-import {Button, Card, StatCard} from "@fabiovisentainer/design-system";
+import {Button, Card, ProgressBar, StatCard} from "@fabiovisentainer/design-system";
 import {Loading} from "@/modules/core/layout/Loading";
 import {useWallets} from "@/modules/wallets/WalletsContext";
 import {WalletFormModal} from "@/modules/wallets/components/WalletFormModal";
 import {useCorporateActions} from "@/modules/wallets/useCorporateActions";
+import {useAssetReferences} from "@/modules/wallets/useAssetReferences";
 import {useToast} from "@/modules/core/ToastContext";
 import {useConfirm} from "@/modules/core/ConfirmContext";
 import {num, pctStr, posColor, usd} from "@/modules/core/format";
@@ -23,6 +24,7 @@ export default function WalletDetailPage({ params }: PageProps<"/wallets/[id]">)
   const wallet = getWallet(id);
   const assets = wallet ? getAssets(id) : [];
   const { actions: corporateActions } = useCorporateActions(assets.map((a) => a.ticker));
+  const { references } = useAssetReferences(assets.map((a) => a.ticker));
 
   useEffect(() => {
     if (!loading && !wallet) router.replace("/wallets");
@@ -40,6 +42,23 @@ export default function WalletDetailPage({ params }: PageProps<"/wallets/[id]">)
   const wVal = walletValue(id);
   const wCost = walletCost(id);
   const result = wVal - wCost;
+
+  // Composição da carteira: % do valor de mercado (qty × preço) em cada setor e em
+  // cada nível de risco informados pelo provedor externo de dados de referência.
+  const composition = (field: "sector" | "riskRating") => {
+    const groups: Record<string, number> = {};
+    for (const a of assets) {
+      const ref = references[a.ticker.toUpperCase()];
+      if (!ref) continue;
+      groups[ref[field]] = (groups[ref[field]] || 0) + a.qty * a.price;
+    }
+    return Object.entries(groups)
+      .map(([label, value]) => ({ label, value, pct: wVal ? (value / wVal) * 100 : 0 }))
+      .sort((x, y) => y.value - x.value);
+  };
+  const bySector = composition("sector");
+  const byRisk = composition("riskRating");
+  const riskColor: Record<string, string> = { Low: "#12B76A", Medium: "#F79009", High: "#F04438" };
 
   return (
     <AppPage title={wallet.name} subtitle="Assets linked to this wallet" backHref="/wallets">
@@ -153,6 +172,36 @@ export default function WalletDetailPage({ params }: PageProps<"/wallets/[id]">)
             </div>
           )}
         </Card>
+
+        {assets.length > 0 && bySector.length > 0 && (
+          <Card className="flex flex-col gap-4">
+            <div>
+              <div className="text-[15px] font-bold">Allocation by sector &amp; risk</div>
+              <div className="text-xs text-[var(--color-text-muted)] mt-0.5">Share of market value, using sector and risk from the external reference-data provider.</div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {[
+                { title: "Sector", rows: bySector, color: () => "var(--color-brand)" },
+                { title: "Risk", rows: byRisk, color: (label: string) => riskColor[label] || "var(--color-brand)" },
+              ].map((block) => (
+                <div key={block.title} className="flex flex-col gap-3">
+                  <div className="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wide">{block.title}</div>
+                  {block.rows.map((r) => (
+                    <div key={r.label} className="flex flex-col gap-1.5">
+                      <div className="flex justify-between text-[13px]">
+                        <span className="font-semibold">{r.label}</span>
+                        <span className="font-mono text-[var(--color-text-muted-2)]">
+                          {r.pct.toFixed(1)}% · {usd(r.value)}
+                        </span>
+                      </div>
+                      <ProgressBar value={r.pct} color={block.color(r.label)} />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {corporateActions.length > 0 && (
           <Card padding="p-0" className="overflow-hidden">
