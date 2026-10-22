@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Azeret_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/AppProviders";
+import { Toast } from "@/modules/core/layout/Toast";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -24,7 +25,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${manrope.variable} ${azeretMono.variable} h-full antialiased`}>
       <body className="min-h-full font-sans text-[var(--color-text)] bg-[var(--color-surface)]">
-        <AppProviders>{children}</AppProviders>
+        <AppProviders>
+          {children}
+          <Toast />
+        </AppProviders>
       </body>
     </html>
   );
